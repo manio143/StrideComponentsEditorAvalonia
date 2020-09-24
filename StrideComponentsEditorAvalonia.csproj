@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Stride.Editor.Avalonia</RootNamespace>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview5" />
+  </ItemGroup>
+
+</Project>
