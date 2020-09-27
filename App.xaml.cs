@@ -33,10 +33,12 @@ namespace Stride.Editor.Avalonia
             AvaloniaXamlLoader.Load(this);
         }
 
+        public static MainWindow dbgWindow;
+
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-                desktopLifetime.MainWindow = new MainWindow();
+                desktopLifetime.MainWindow = dbgWindow = new MainWindow();
             else throw new NotSupportedException("Expected ApplicationLifetime to be Desktop");
             //else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewLifetime)
             //    singleViewLifetime.MainView = new MainView();

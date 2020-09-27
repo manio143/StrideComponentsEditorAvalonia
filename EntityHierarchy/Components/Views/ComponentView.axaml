@@ -1,0 +1,25 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Stride.Editor.Avalonia.EntityHierarchy.Components.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Stride.Editor.Avalonia.EntityHierarchy.Components.Views.ComponentView">
+
+  <Expander>
+    <Expander.Header>
+      <StackPanel Orientation="Horizontal">
+        <CheckBox IsVisible="{Binding IsEnablable}" IsChecked="{Binding IsEnabled}" Command="{Binding ToggleEnabled}" />
+        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+      </StackPanel>
+    </Expander.Header>
+    <ItemsControl Items="{Binding ComponentMembers}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <local:ComponentMemberView DataContext="{Binding}"/>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Expander>
+
+</UserControl>

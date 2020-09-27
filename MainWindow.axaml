@@ -5,5 +5,18 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Stride.Editor.Avalonia.MainWindow"
         Title="Hello World">
-    Welcome to Avalonia!
+  <DockPanel Name="DockPanel">
+    <Menu DockPanel.Dock="Top" VerticalAlignment="Top">
+      <MenuItem Header="_File">
+        <MenuItem Header="_Open.." Command="{Binding OpenScene}" />
+        <Separator/>
+        <MenuItem Header="_Exit" Command="{Binding Close}"/>
+      </MenuItem>
+    </Menu>
+    <Grid Name="RootPanel" DockPanel.Dock="Bottom" ColumnDefinitions="*,*" RowDefinitions="Auto" Margin="4">
+      <TextBlock Name="Loading" Grid.Column="0" Grid.Row="0" IsVisible="{Binding IsLoading}">Loading...</TextBlock>
+      <ContentControl Grid.Column="0" Grid.Row="0" IsVisible="{Binding !IsLoading}" Name="Hierarchy" />
+      <ContentControl Grid.Column="1" Grid.Row="0" IsVisible="{Binding !IsLoading}" Name="Components" />
+    </Grid>
+  </DockPanel>
 </Window>

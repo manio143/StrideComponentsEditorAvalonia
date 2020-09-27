@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -21,6 +21,17 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview5" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.0-preview5" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Stride.Core.Assets" Version="4.0.0.1-beta04" />
+    <PackageReference Include="Stride.Assets" Version="4.0.0.1-beta04" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\Properties\Property.axaml.cs">
+      <DependentUpon>Property.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
