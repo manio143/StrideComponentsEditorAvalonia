@@ -3,9 +3,16 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Stride.Editor.Avalonia</RootNamespace>
+    <RootNamespace>Stride.Editor</RootNamespace>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stride.Editor.Commands\Stride.Editor.Commands.csproj" />
+    <ProjectReference Include="..\Stride.Editor.Design\Stride.Editor.Design.csproj" />
+    <ProjectReference Include="..\Stride.Editor.Presentation\Stride.Editor.Presentation.csproj" />
+    <ProjectReference Include="..\Stride.Editor.Services\Stride.Editor.Services.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
@@ -17,21 +24,8 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0-preview5" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview5" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview5" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.0-preview5" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview5" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Stride.Core.Assets" Version="4.0.0.1-beta04" />
-    <PackageReference Include="Stride.Assets" Version="4.0.0.1-beta04" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Controls\Properties\Property.axaml.cs">
-      <DependentUpon>Property.axaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
+  
 </Project>

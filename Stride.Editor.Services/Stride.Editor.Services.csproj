@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stride.Editor.Commands\Stride.Editor.Commands.csproj" />
+    <ProjectReference Include="..\Stride.Editor.Design\Stride.Editor.Design.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Stride.Core.Assets" Version="4.0.0.1-beta04" />
+    <PackageReference Include="Stride.Assets" Version="4.0.0.1-beta04" ExcludeAssets="contentFiles" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AssetBrowser\" />
+  </ItemGroup>
+
+</Project>
