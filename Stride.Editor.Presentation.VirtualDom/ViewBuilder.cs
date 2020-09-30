@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.FuncUI;
 using Avalonia.FuncUI.DSL;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Microsoft.FSharp.Core;
 
 namespace Stride.Editor.Presentation
 {
-    public class ViewBuilder<TView> : IViewBuilder
+    public class ViewBuilder<TView> : IViewBuilder, IEquatable<ViewBuilder<TView>>
     {
         protected List<Types.IAttr<TView>> Attrs = new List<Types.IAttr<TView>>();
 
@@ -78,5 +80,21 @@ namespace Stride.Editor.Presentation
         {
             return Avalonia.FuncUI.Builder.ViewBuilder.Create(Microsoft.FSharp.Collections.ListModule.OfSeq(Attrs));
         }
+
+        public bool Equals(ViewBuilder<TView> other)
+        {
+            if (other == null)
+                return false;
+            if (Dispatcher.UIThread.CheckAccess())
+                return Enumerable.SequenceEqual(Attrs, other.Attrs);
+            // If we have any elements that could VerifyAccess() this would get killed.
+            // Example: ColumnDefinition.Width checks thread in its getter
+            else return Dispatcher.UIThread.InvokeAsync(() => this.Equals(other)).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        public override bool Equals(object obj)
+            => obj != null && obj.GetType() == this.GetType() && Equals((ViewBuilder<TView>)obj);
+
+        public override int GetHashCode() => Attrs.GetHashCode();
     }
 }

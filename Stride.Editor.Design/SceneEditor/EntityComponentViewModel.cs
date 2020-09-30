@@ -1,9 +1,9 @@
-﻿using Stride.Core.Reflection;
+﻿using Stride.Core;
+using Stride.Core.Reflection;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.StringUtils;
 using Stride.Engine;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Stride.Editor.Design.SceneEditor

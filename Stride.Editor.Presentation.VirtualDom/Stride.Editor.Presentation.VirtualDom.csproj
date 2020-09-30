@@ -9,7 +9,14 @@
     <!--<PackageReference Include="Avalonia.Diagnostics" Version="0.9.9" />-->
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.9" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.9" />
-    <PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.4.1" />
+    <PackageReference Include="FSharp.Core" Version="4.6.2" />
+    <!--<PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.4.1" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Avalonia.FuncUI">
+      <HintPath>..\..\..\Avalonia.FuncUI\src\Avalonia.FuncUI\bin\Debug\netstandard2.0\Avalonia.FuncUI.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -70,17 +70,18 @@ namespace Stride.Editor.Services
             while (true)
             {
                 await Task.Delay(16); // 60 fps refresh rate
+                FastList<IAssetEditor> local;
                 lock (UpdateView)
                 {
                     if (UpdateView.Count == 0)
                         continue;
 
-                    var local = new FastList<IAssetEditor>(UpdateView);
+                    local = new FastList<IAssetEditor>(UpdateView);
                     UpdateView.Clear();
-
-                    foreach (var editor in local)
-                        AssetEditorViewUpdater.UpdateAssetEditorView(editor);
                 }
+
+                foreach (var editor in local)
+                    AssetEditorViewUpdater.UpdateAssetEditorView(editor);
             }
         }
     }

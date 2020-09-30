@@ -41,8 +41,8 @@ namespace Stride.Editor.Presentation.SceneEditor
                     new Virtual.CheckBox
                     {
                         IsVisible = viewModel.IsEnablable,
-                        IsEnabled = viewModel.IsEnabled,
-                        OnEnabled = (enabled) => { }, //TODO: create a command
+                        IsChecked = viewModel.IsEnabled,
+                        OnChecked = (check) => { }, //TODO: create a command
                     },
                     new Virtual.TextBlock
                     {

@@ -20,5 +20,15 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
         {
             set { Subscribe(Avalonia.Controls.CheckBox.IsEnabledProperty, value); }
         }
+
+        public bool? IsChecked
+        {
+            set { Property(Avalonia.Controls.CheckBox.IsCheckedProperty, value); }
+        }
+
+        public Action<bool?> OnChecked
+        {
+            set { Subscribe(Avalonia.Controls.CheckBox.IsCheckedProperty, value); }
+        }
     }
 }
