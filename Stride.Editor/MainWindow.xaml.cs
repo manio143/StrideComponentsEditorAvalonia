@@ -12,6 +12,7 @@ using Stride.Editor.Avalonia.EntityHierarchy.Components.Views;
 using Stride.Editor.Commands;
 using Stride.Editor.Design.SceneEditor;
 using Stride.Editor.Presentation.SceneEditor;
+using Stride.Editor.Presentation.VirtualDom;
 using Stride.Editor.Services;
 using Stride.Engine;
 using System;

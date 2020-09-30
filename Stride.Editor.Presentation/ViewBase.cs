@@ -1,10 +1,9 @@
-﻿using Avalonia.Controls;
-using Stride.Core;
+﻿using Stride.Core;
 using Stride.Editor.Design;
 
 namespace Stride.Editor.Presentation
 {
-    public abstract class ViewBase<TViewModel> : IView<TViewModel, IControl>
+    public abstract class ViewBase<TViewModel> : IView<TViewModel, IViewBuilder>
     {
         public ViewBase(IServiceRegistry services)
         {
@@ -14,6 +13,6 @@ namespace Stride.Editor.Presentation
         public IServiceRegistry Services { get; }
 
         /// <inheritdoc/>
-        public abstract IControl CreateView(TViewModel viewModel);
+        public abstract IViewBuilder CreateView(TViewModel viewModel);
     }
 }

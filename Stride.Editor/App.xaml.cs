@@ -9,26 +9,26 @@ namespace Stride.Editor.Avalonia
 {
     public class App : Application
     {
-        public const string ResourceRoot = "Stride.Editor.Avalonia";
-        public static Styles FluentDark = new Styles
-        {
-            new StyleInclude(new Uri($"avares://{ResourceRoot}/Styles"))
-            {
-                Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml")
-            },
-        };
+        //public const string ResourceRoot = "Stride.Editor.Avalonia";
+        //public static Styles FluentDark = new Styles
+        //{
+        //    new StyleInclude(new Uri($"avares://{ResourceRoot}/Styles"))
+        //    {
+        //        Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml")
+        //    },
+        //};
 
-        public static Styles FluentLight = new Styles
-        {
-            new StyleInclude(new Uri($"avares://{ResourceRoot}/Styles"))
-            {
-                Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentLight.xaml")
-            },
-        };
+        //public static Styles FluentLight = new Styles
+        //{
+        //    new StyleInclude(new Uri($"avares://{ResourceRoot}/Styles"))
+        //    {
+        //        Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentLight.xaml")
+        //    },
+        //};
 
         public override void Initialize()
         {
-            Styles.Insert(0, FluentDark);
+            //Styles.Insert(0, FluentDark); no Fluent style in 0.9.9
 
             AvaloniaXamlLoader.Load(this);
         }

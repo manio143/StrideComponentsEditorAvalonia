@@ -2,6 +2,8 @@
 using Stride.Core.Collections;
 using Stride.Editor.Commands;
 using Stride.Editor.Design;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Stride.Editor.Services
 {
@@ -11,11 +13,16 @@ namespace Stride.Editor.Services
         {
             Services = serviceRegistry;
             AssetEditorViewUpdater = serviceRegistry.GetSafeServiceAs<IAssetEditorViewUpdater>();
+            Ticker = Task.Run(Tick);
         }
+
+        private readonly Task Ticker;
 
         public IServiceRegistry Services { get; }
 
         public IAssetEditorViewUpdater AssetEditorViewUpdater { get; }
+
+        private HashSet<IAssetEditor> UpdateView = new HashSet<IAssetEditor>();
 
         /// <inheritdoc/>
         public void Dispatch<TEditor>(IEditorCommand<TEditor> editorCommand) where TEditor : class, IAssetEditor
@@ -30,7 +37,8 @@ namespace Stride.Editor.Services
                 }
 
             if (found != null)
-                AssetEditorViewUpdater.UpdateAssetEditorView(found);
+                lock (UpdateView)
+                    UpdateView.Add(found);
         }
 
         private FastCollection<IAssetEditor> activeEditors = new FastCollection<IAssetEditor>();
@@ -55,6 +63,25 @@ namespace Stride.Editor.Services
 
             activeEditors.Add(editor);
             return existing != null;
+        }
+
+        public async Task Tick()
+        {
+            while (true)
+            {
+                await Task.Delay(16); // 60 fps refresh rate
+                lock (UpdateView)
+                {
+                    if (UpdateView.Count == 0)
+                        continue;
+
+                    var local = new FastList<IAssetEditor>(UpdateView);
+                    UpdateView.Clear();
+
+                    foreach (var editor in local)
+                        AssetEditorViewUpdater.UpdateAssetEditorView(editor);
+                }
+            }
         }
     }
 }
