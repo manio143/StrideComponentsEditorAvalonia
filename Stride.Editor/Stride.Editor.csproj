@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Stride.Editor.Commands\Stride.Editor.Commands.csproj" />
     <ProjectReference Include="..\Stride.Editor.Design\Stride.Editor.Design.csproj" />
+    <ProjectReference Include="..\Stride.Editor.Presentation.VirtualDom\Stride.Editor.Presentation.VirtualDom.csproj" />
     <ProjectReference Include="..\Stride.Editor.Presentation\Stride.Editor.Presentation.csproj" />
     <ProjectReference Include="..\Stride.Editor.Services\Stride.Editor.Services.csproj" />
   </ItemGroup>
@@ -23,9 +24,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0-preview5" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview5" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview5" />
+    <PackageReference Include="Avalonia" Version="0.9.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.9" />
+    <!--<PackageReference Include="Avalonia.Diagnostics" Version="0.9.9" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
   
 </Project>

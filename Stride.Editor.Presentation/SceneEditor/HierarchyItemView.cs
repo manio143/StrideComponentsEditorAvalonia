@@ -1,9 +1,9 @@
-﻿using Avalonia.Controls;
-using Stride.Core;
+﻿using Stride.Core;
 using Stride.Editor.Commands;
 using Stride.Editor.Commands.SceneEditor;
 using Stride.Editor.Design.SceneEditor;
 using System.Linq;
+using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.SceneEditor
 {
@@ -16,9 +16,9 @@ namespace Stride.Editor.Presentation.SceneEditor
         private ICommandDispatcher dispatcher;
 
 
-        public override IControl CreateView(HierarchyItemViewModel viewModel)
+        public override IViewBuilder CreateView(HierarchyItemViewModel viewModel)
         {
-            var tvi = new TreeViewItem
+            var tvi = new Virtual.TreeViewItem
             {
                 Header = viewModel.Name, // TODO: add folder/entity icon
                 // ContextMenu = ... TODO: generate entity context menu
@@ -26,18 +26,10 @@ namespace Stride.Editor.Presentation.SceneEditor
                 Items = viewModel.Children.Select(c => CreateView(c)),
                 IsExpanded = viewModel.IsExpanded,
                 IsSelected = viewModel.IsSelected,
+                OnSelected = selected => dispatcher.Dispatch(new SelectHierarchyItemCommand(viewModel, selected)),
+                OnExpanded = expanded => dispatcher.Dispatch(new ExpandHierarchyItemCommand(viewModel, expanded)),
             };
-            tvi.PropertyChanged += Tvi_PropertyChanged;
             return tvi;
-        }
-
-        private void Tvi_PropertyChanged(object sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
-        {
-            var tvi = (TreeViewItem)sender;
-            if (e.Property == TreeViewItem.IsExpandedProperty)
-                dispatcher.Dispatch(new ExpandHierarchyItemCommand(tvi.Tag as HierarchyItemViewModel, (bool)e.NewValue));
-            else if (e.Property == TreeViewItem.IsSelectedProperty)
-                dispatcher.Dispatch(new SelectHierarchyItemCommand(tvi.Tag as HierarchyItemViewModel, (bool)e.NewValue));
         }
     }
 }

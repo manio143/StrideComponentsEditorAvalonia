@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Stride.Core;
 using Stride.Editor.Design.SceneEditor;
+using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.SceneEditor
 {
@@ -10,9 +11,9 @@ namespace Stride.Editor.Presentation.SceneEditor
         {
         }
 
-        public override IControl CreateView(EntityViewModel viewModel)
+        public override IViewBuilder CreateView(EntityViewModel viewModel)
         {
-            return new ContentControl(); //TODO: implement view
+            return new Virtual.ContentControl(); //TODO: implement view
         }
     }
 }

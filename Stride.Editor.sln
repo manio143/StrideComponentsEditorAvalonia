@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stride.Editor.Commands", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stride.Editor.Services", "Stride.Editor.Services\Stride.Editor.Services.csproj", "{2AE458BA-BA35-4ECC-BE88-63BE3D02EED1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stride.Editor.Presentation.VirtualDom", "Stride.Editor.Presentation.VirtualDom\Stride.Editor.Presentation.VirtualDom.csproj", "{FB0DCB78-E924-4465-8515-07FDCEDB862B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{2AE458BA-BA35-4ECC-BE88-63BE3D02EED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AE458BA-BA35-4ECC-BE88-63BE3D02EED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AE458BA-BA35-4ECC-BE88-63BE3D02EED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB0DCB78-E924-4465-8515-07FDCEDB862B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB0DCB78-E924-4465-8515-07FDCEDB862B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB0DCB78-E924-4465-8515-07FDCEDB862B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB0DCB78-E924-4465-8515-07FDCEDB862B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,10 @@
-﻿using Avalonia.Controls;
-using Stride.Core;
+﻿using Stride.Core;
 using Stride.Editor.Commands;
 using Stride.Editor.Commands.SceneEditor;
 using Stride.Editor.Design.SceneEditor;
 using System.Linq;
+using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
+using Avalonia.Controls;
 
 namespace Stride.Editor.Presentation.SceneEditor
 {
@@ -16,32 +17,30 @@ namespace Stride.Editor.Presentation.SceneEditor
 
         private ICommandDispatcher dispatcher;
 
-        public override IControl CreateView(SceneViewModel scene)
+        public override IViewBuilder CreateView(SceneViewModel scene)
         {
             var itemView = new HierarchyItemView(Services);
-            var tree = new TreeView
+            var tree = new Virtual.TreeView
             {
                 Items = scene.Items.Select(item => itemView.CreateView(item)),
                 SelectionMode = SelectionMode.Multiple,
                 AutoScrollToSelectedItem = true,
+                OnSelectedItems = items =>
+                {
+                    if (items.Count == 1)
+                    {
+                        var viewItem = (TreeViewItem)items[0];
+                        var hierarchyItem = (HierarchyItemViewModel)viewItem.Tag;
+
+                        if (hierarchyItem.IsFolder)
+                            return;
+
+                        var entityViewModel = (EntityViewModel)hierarchyItem;
+                        dispatcher.Dispatch(new SelectEntityCommand(entityViewModel));
+                    }
+                }
             };
-            tree.SelectionChanged += Tree_SelectionChanged;
             return tree;
-        }
-
-        private void Tree_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 1)
-            {
-                var viewItem = (TreeViewItem)e.AddedItems[0];
-                var hierarchyItem = (HierarchyItemViewModel)viewItem.Tag;
-
-                if (hierarchyItem.IsFolder)
-                    return;
-
-                var entityViewModel = (EntityViewModel)hierarchyItem;
-                dispatcher.Dispatch(new SelectEntityCommand(entityViewModel));
-            }
         }
     }
 }

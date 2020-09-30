@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Core.Extensions;
 using Stride.Editor.Presentation;
+using Stride.Editor.Presentation.VirtualDom;
 using Stride.Editor.Services;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace Stride.Editor
 
         private ContentControl container;
         private Dictionary<Type, Type> viewCache = new Dictionary<Type, Type>();
+        private IViewBuilder lastView;
+
         public void UpdateAssetEditorView<TEditor>(TEditor editor)
         {
             Type editorViewType;
@@ -31,7 +34,11 @@ namespace Stride.Editor
             }
 
             var editorView = (ViewBase<TEditor>)Activator.CreateInstance(editorViewType, Services);
-            container.Content = editorView.CreateView(editor);
+            var view = editorView.CreateView(editor);
+
+            view.UpdateRoot(container, lastView);
+
+            lastView = view;
         }
     }
 }

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.9.9" />
+    <!--<PackageReference Include="Avalonia.Diagnostics" Version="0.9.9" />-->
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.9" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.9" />
+    <PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.4.1" />
+  </ItemGroup>
+
+</Project>
