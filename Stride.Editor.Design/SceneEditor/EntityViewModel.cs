@@ -18,8 +18,8 @@ namespace Stride.Editor.Design.SceneEditor
 
         public EntityDesign Source { get; }
 
-        public IEnumerable<ComponentViewModel> Components
-            => Source.Entity.Components.Select(comp => new ComponentViewModel(comp));
+        public IEnumerable<EntityComponentViewModel> Components
+            => Source.Entity.Components.Select(comp => new EntityComponentViewModel(comp));
 
         /// <summary>
         /// Recursively create hierarchy of entities by populating <see cref="HierarchyItemViewModel.Children"/>.

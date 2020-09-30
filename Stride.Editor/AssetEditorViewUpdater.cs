@@ -1,6 +1,8 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using Stride.Core;
 using Stride.Core.Extensions;
+using Stride.Editor.Design;
 using Stride.Editor.Presentation;
 using Stride.Editor.Presentation.VirtualDom;
 using Stride.Editor.Services;
@@ -24,19 +26,22 @@ namespace Stride.Editor
         private Dictionary<Type, Type> viewCache = new Dictionary<Type, Type>();
         private IViewBuilder lastView;
 
-        public void UpdateAssetEditorView<TEditor>(TEditor editor)
+        public void UpdateAssetEditorView(IAssetEditor editor)
         {
             Type editorViewType;
-            if (!viewCache.TryGetValue(typeof(TEditor), out editorViewType))
+            if (!viewCache.TryGetValue(editor.GetType(), out editorViewType))
             {
-                editorViewType = typeof(ViewBase<TEditor>).GetInheritedTypes().First();
-                viewCache.Add(typeof(TEditor), editorViewType);
+                editorViewType = typeof(ViewBase<>).MakeGenericType(editor.GetType()).GetInheritedTypes().First();
+                viewCache.Add(editor.GetType(), editorViewType);
             }
 
-            var editorView = (ViewBase<TEditor>)Activator.CreateInstance(editorViewType, Services);
+            var editorView = (IViewBase)Activator.CreateInstance(editorViewType, Services);
             var view = editorView.CreateView(editor);
 
-            view.UpdateRoot(container, lastView);
+            if (Dispatcher.UIThread.CheckAccess())
+                view.UpdateRoot(container, lastView);
+            else
+                Dispatcher.UIThread.Post(() => view.UpdateRoot(container, lastView));
 
             lastView = view;
         }

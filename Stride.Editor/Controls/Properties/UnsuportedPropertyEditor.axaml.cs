@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Stride.Editor.Avalonia.Core.StringUtils;
+using Stride.Editor.Design.Core.StringUtils;
 using Stride.Engine;
 
 namespace Stride.Editor.Avalonia.Controls.Properties

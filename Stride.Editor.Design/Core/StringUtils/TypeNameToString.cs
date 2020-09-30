@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Stride.Editor.Avalonia.Core.StringUtils
+namespace Stride.Editor.Design.Core.StringUtils
 {
     public static class TypeNameToString
     {

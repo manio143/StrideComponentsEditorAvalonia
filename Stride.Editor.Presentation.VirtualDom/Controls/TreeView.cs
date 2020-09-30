@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.FuncUI;
+using Avalonia.FuncUI.DSL;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,9 +26,9 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
             set { Property(Avalonia.Controls.TreeView.AutoScrollToSelectedItemProperty, value); }
         }
 
-        public Action<IList> OnSelectedItems
+        public Action<object> OnSelectedItems
         {
-            set { Subscribe(Avalonia.Controls.TreeView.SelectedItemsProperty, value); }
+            set { Subscribe(Avalonia.Controls.TreeView.SelectedItemProperty, value); }
         }
     }
 }

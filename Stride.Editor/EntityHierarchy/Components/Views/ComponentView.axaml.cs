@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
+using Stride.Editor.Design.SceneEditor;
 using System;
 
 namespace Stride.Editor.Avalonia.EntityHierarchy.Components.Views
@@ -13,7 +14,7 @@ namespace Stride.Editor.Avalonia.EntityHierarchy.Components.Views
             this.InitializeComponent();
         }
 
-        public ComponentView(ComponentViewModel viewModel)
+        public ComponentView(EntityComponentViewModel viewModel)
             : this()
         {
             DataContext = viewModel;

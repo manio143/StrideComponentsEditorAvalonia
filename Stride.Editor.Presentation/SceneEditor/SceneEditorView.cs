@@ -14,6 +14,10 @@ namespace Stride.Editor.Presentation.SceneEditor
         {
         }
 
+        private static ColumnDefinitions columns = new ColumnDefinitions("*,*");
+        private static RowDefinitions rows = new RowDefinitions();
+        private static Thickness margin = new Thickness(4); //TODO: this should be in a style file or something
+        
         public override IViewBuilder CreateView(Design.SceneEditor.SceneEditor viewModel)
         {
             var sceneHierarchy = new SceneHierarchyView(Services).CreateView(viewModel.Scene);
@@ -22,9 +26,9 @@ namespace Stride.Editor.Presentation.SceneEditor
             components.Property(Grid.ColumnProperty, 1);
             return new Virtual.Grid
             {
-                ColumnDefinitions = new ColumnDefinitions("*,*"),
-                RowDefinitions = new RowDefinitions(),
-                Margin = new Thickness(4), //TODO: this should be in a style file or something
+                ColumnDefinitions = columns,
+                RowDefinitions = rows,
+                Margin = margin, 
                 Children = new List<IViewBuilder>
                 {
                     sceneHierarchy,

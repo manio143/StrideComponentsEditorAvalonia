@@ -1,6 +1,8 @@
 ﻿using Avalonia.Controls;
 using Stride.Core;
+using Stride.Core.Annotations;
 using Stride.Editor.Design.SceneEditor;
+using System.Linq;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.SceneEditor
@@ -9,11 +11,20 @@ namespace Stride.Editor.Presentation.SceneEditor
     {
         public ComponentPropertiesView(IServiceRegistry services) : base(services)
         {
+            componentView = new EntityComponentView(services);
         }
 
-        public override IViewBuilder CreateView(EntityViewModel viewModel)
+        private EntityComponentView componentView;
+
+        public override IViewBuilder CreateView([CanBeNull] EntityViewModel viewModel)
         {
-            return new Virtual.ContentControl(); //TODO: implement view
+            return new Virtual.ScrollViewer
+            {
+                Content = viewModel == null ? null : new Virtual.StackPanel
+                {
+                    Children = viewModel.Components.Select(c => componentView.CreateView(c)),
+                }
+            };
         }
     }
 }

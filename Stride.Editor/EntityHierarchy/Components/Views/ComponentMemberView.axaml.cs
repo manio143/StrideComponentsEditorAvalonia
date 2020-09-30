@@ -2,6 +2,7 @@
 using Avalonia.Markup.Xaml;
 using System;
 using Stride.Editor.Avalonia.Controls.Properties;
+using Stride.Editor.Design.Core;
 
 namespace Stride.Editor.Avalonia.EntityHierarchy.Components.Views
 {
@@ -15,18 +16,18 @@ namespace Stride.Editor.Avalonia.EntityHierarchy.Components.Views
 
         private void ComponentMemberView_DataContextChanged(object sender, EventArgs e)
         {
-            var vm = (ComponentMemberViewModel)DataContext;
+            var vm = (MemberViewModel)DataContext;
             var propertyVM = new PropertyViewModel
             {
                 Label = vm.Name,
                 Type = vm.TypeDescriptor,
                 Value = vm.Value,
             };
-            propertyVM.ValueChanged += (val) => vm.Value = val;
+            //propertyVM.ValueChanged += (val) => vm.Value = val;
             Content = new Property() { DataContext = propertyVM };
         }
 
-        public ComponentMemberView(ComponentMemberViewModel vm)
+        public ComponentMemberView(MemberViewModel vm)
             : this()
         {
             DataContext = vm;

@@ -3,7 +3,7 @@ using Stride.Editor.Design;
 
 namespace Stride.Editor.Presentation
 {
-    public abstract class ViewBase<TViewModel> : IView<TViewModel, IViewBuilder>
+    public abstract class ViewBase<TViewModel> : IViewBase, IView<TViewModel, IViewBuilder>
     {
         public ViewBase(IServiceRegistry services)
         {
@@ -14,5 +14,10 @@ namespace Stride.Editor.Presentation
 
         /// <inheritdoc/>
         public abstract IViewBuilder CreateView(TViewModel viewModel);
+
+        public IViewBuilder CreateView(object viewModel)
+        {
+            return CreateView((TViewModel)viewModel);
+        }
     }
 }

@@ -1,28 +1,30 @@
-﻿using Stride.Core;
-using Stride.Core.Reflection;
-using Stride.Editor.Avalonia.Core.StringUtils;
+﻿using Stride.Core.Reflection;
+using Stride.Editor.Design.Core;
+using Stride.Editor.Design.Core.StringUtils;
 using Stride.Engine;
-using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace Stride.Editor.Avalonia.EntityHierarchy.Components
+namespace Stride.Editor.Design.SceneEditor
 {
-    public class ComponentViewModel
+    public class EntityComponentViewModel
     {
-        public ComponentViewModel(EntityComponent component)
+        public EntityComponentViewModel(EntityComponent component)
         {
-            Component = component;
+            Source = component;
             TypeDescriptor = TypeDescriptorFactory.Default.Find(component.GetType());
             Name = ComponentName();
             IsEnablable = HasEnabledProperty();
         }
 
-        public EntityComponent Component { get; set; }
+        public EntityComponent Source { get; }
 
-        public ITypeDescriptor TypeDescriptor { get; set; }
+        public string Name { get; }
 
-        public string Name { get; set; }
+        public ITypeDescriptor TypeDescriptor { get; }
+
+        public bool IsExpanded { get; set; }
 
         public bool IsEnablable { get; }
 
@@ -32,28 +34,13 @@ namespace Stride.Editor.Avalonia.EntityHierarchy.Components
             {
                 if (!IsEnablable)
                     return false; // don't throw
-                return (bool)EnabledMember.Get(Component);
+                return (bool)EnabledMember.Get(Source);
             }
         }
 
-        public IEnumerable<ComponentMemberViewModel> ComponentMembers
+        public IEnumerable<MemberViewModel> ComponentMembers
             => TypeDescriptor.Members
-                .Select(member => new ComponentMemberViewModel(Component, member));
-
-        #region Commands
-
-        /// <summary>
-        /// Toggles the Enabled property/field value of the <see cref="Component"/>.
-        /// </summary>
-        public void ToggleEnabled()
-        {
-            if (!IsEnablable)
-                throw new InvalidOperationException("This component cannot be enabled/disabled.");
-            var value = (bool)EnabledMember.Get(Component);
-            EnabledMember.Set(Component, !value);
-        }
-
-        #endregion Commands
+                .Select(member => new MemberViewModel(Source, member));
 
         private IMemberDescriptor enabledMember;
         private IMemberDescriptor EnabledMember
