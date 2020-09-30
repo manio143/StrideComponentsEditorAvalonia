@@ -38,10 +38,14 @@ namespace Stride.Editor
             var editorView = (IViewBase)Activator.CreateInstance(editorViewType, Services);
             var view = editorView.CreateView(editor);
 
-            if (Dispatcher.UIThread.CheckAccess())
-                view.UpdateRoot(container, lastView);
-            else
-                Dispatcher.UIThread.Post(() => view.UpdateRoot(container, lastView));
+            // Skip update if views are equal (note: mostly for debugging, as UpdateRoot also checks that)
+            if (!view.Equals(lastView))
+            {
+                if (Dispatcher.UIThread.CheckAccess())
+                    view.UpdateRoot(container, lastView);
+                else
+                    Dispatcher.UIThread.Post(() => view.UpdateRoot(container, lastView));
+            }
 
             lastView = view;
         }
