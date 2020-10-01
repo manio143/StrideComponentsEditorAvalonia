@@ -13,6 +13,7 @@ namespace Stride.Editor.Services
         {
             Services = serviceRegistry;
             AssetEditorViewUpdater = serviceRegistry.GetSafeServiceAs<IAssetEditorViewUpdater>();
+            UndoService = serviceRegistry.GetSafeServiceAs<IUndoService>();
             Ticker = Task.Run(Tick);
         }
 
@@ -21,6 +22,8 @@ namespace Stride.Editor.Services
         public IServiceRegistry Services { get; }
 
         public IAssetEditorViewUpdater AssetEditorViewUpdater { get; }
+
+        public IUndoService UndoService { get; }
 
         private HashSet<IAssetEditor> UpdateView = new HashSet<IAssetEditor>();
 
@@ -33,12 +36,34 @@ namespace Stride.Editor.Services
                 {
                     editorCommand.Apply(activeEditor);
                     found = activeEditor;
+
+                    if (editorCommand is IReversibleEditorCommand<TEditor> reversible)
+                        UndoService.RegisterCommand(new ReversibleEditorCommand<TEditor>(this, reversible, activeEditor));
+                    
                     break;
                 }
 
             if (found != null)
                 lock (UpdateView)
                     UpdateView.Add(found);
+        }
+
+        /// <inheritdoc/>
+        public void DispatchDirectApply<TEditor>(TEditor editor, IEditorCommand<TEditor> editorCommand) where TEditor : class, IAssetEditor
+        {
+            editorCommand.Apply(editor);
+            if (activeEditors.Contains(editor))
+                lock (UpdateView)
+                    UpdateView.Add(editor);
+        }
+
+        /// <inheritdoc/>
+        public void DispatchDirectUndo<TEditor>(TEditor editor, IReversibleEditorCommand<TEditor> editorCommand) where TEditor : class, IAssetEditor
+        {
+            editorCommand.Undo(editor);
+            if (activeEditors.Contains(editor))
+                lock (UpdateView)
+                    UpdateView.Add(editor);
         }
 
         private FastCollection<IAssetEditor> activeEditors = new FastCollection<IAssetEditor>();

@@ -12,6 +12,10 @@
         <Separator/>
         <MenuItem Header="_Exit" Command="{Binding Close}"/>
       </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Header="_Undo" IsEnabled="{Binding CanUndo}" Command="{Binding Undo}" />
+        <MenuItem Header="_Redo" IsEnabled="{Binding CanRedo}" Command="{Binding Redo}"/>
+      </MenuItem>
     </Menu>
     <ContentControl Name="AssetEditorContainer" />
   </DockPanel>

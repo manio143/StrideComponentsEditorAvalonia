@@ -1,5 +1,7 @@
 ﻿using Avalonia.Layout;
 using Stride.Core;
+using Stride.Editor.Commands;
+using Stride.Editor.Commands.SceneEditor;
 using Stride.Editor.Design.SceneEditor;
 using Stride.Editor.Presentation.Core;
 using System;
@@ -14,9 +16,11 @@ namespace Stride.Editor.Presentation.SceneEditor
         public EntityComponentView(IServiceRegistry services) : base(services)
         {
             memberView = new MemberView(services);
+            dispatcher = services.GetSafeServiceAs<ICommandDispatcher>();
         }
 
         private MemberView memberView;
+        private ICommandDispatcher dispatcher;
 
         public override IViewBuilder CreateView(EntityComponentViewModel viewModel)
         {
@@ -42,7 +46,11 @@ namespace Stride.Editor.Presentation.SceneEditor
                     {
                         IsVisible = viewModel.IsEnablable,
                         IsChecked = viewModel.IsEnabled,
-                        OnChecked = (check) => { }, //TODO: create a command
+                        OnChecked = (check) =>
+                        {
+                            if (viewModel.IsEnablable)
+                                dispatcher.Dispatch(new EnableEntityComponentCommand(viewModel, check ?? false));
+                        },
                     },
                     new Virtual.TextBlock
                     {

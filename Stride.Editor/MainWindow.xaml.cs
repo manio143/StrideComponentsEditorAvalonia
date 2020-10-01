@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Microsoft.Build.Locator;
@@ -28,6 +29,7 @@ namespace Stride.Editor.Avalonia
         private ServiceRegistry Services = new ServiceRegistry();
         private AssetEditorViewUpdater viewUpdater;
         private CommandDispatcher commandDispatcher;
+        private UndoService undoService;
         public bool IsLoading { get; set; }
         public MainWindow()
         {
@@ -40,6 +42,15 @@ namespace Stride.Editor.Avalonia
 
             viewUpdater = new AssetEditorViewUpdater(Services, this.FindControl<ContentControl>("AssetEditorContainer"));
             Services.AddService<IAssetEditorViewUpdater>(viewUpdater);
+
+            undoService = new UndoService();
+            undoService.StateChanged += () =>
+            {
+                this.CanUndo = undoService.CanUndo;
+                this.CanRedo = undoService.CanRedo;
+            }; // refresh menu
+            Services.AddService<IUndoService>(undoService);
+
             commandDispatcher = new CommandDispatcher(Services);
             Services.AddService<ICommandDispatcher>(commandDispatcher);
         }
@@ -89,6 +100,11 @@ namespace Stride.Editor.Avalonia
                 }
             }).ConfigureAwait(false);
         }
+
+        public bool CanUndo { get; set; }
+        public bool CanRedo { get; set; }
+        public void Undo() => undoService.Undo();
+        public void Redo() => undoService.Redo();
 
         private void InitializeComponent()
         {

@@ -3,6 +3,7 @@ using Stride.Core.Reflection;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.StringUtils;
 using Stride.Engine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,6 +36,12 @@ namespace Stride.Editor.Design.SceneEditor
                 if (!IsEnablable)
                     return false; // don't throw
                 return (bool)EnabledMember.Get(Source);
+            }
+            set
+            {
+                if (!IsEnablable)
+                    throw new InvalidOperationException("Cannot set IsEnabled for this component");
+                EnabledMember.Set(Source, value); // we modify the component in the asset in memory
             }
         }
 
