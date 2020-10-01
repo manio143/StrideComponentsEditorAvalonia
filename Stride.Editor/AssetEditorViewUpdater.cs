@@ -44,7 +44,10 @@ namespace Stride.Editor
                 if (Dispatcher.UIThread.CheckAccess())
                     view.UpdateRoot(container, lastView);
                 else
-                    Dispatcher.UIThread.Post(() => view.UpdateRoot(container, lastView));
+                {
+                    var capture = lastView;
+                    Dispatcher.UIThread.Post(() => view.UpdateRoot(container, capture));
+                }
             }
 
             lastView = view;

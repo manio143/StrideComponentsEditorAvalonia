@@ -62,7 +62,7 @@ namespace Stride.Editor.Avalonia
             await Task.Run(async () =>
             {
                 // TODO: obtain the path with a file dialog
-                PackageSession.Load(@"D:\Documents\Stride Projects\RiseOfTheUndeaf\RiseOfTheUndeaf.sln", sessionResult);
+                PackageSession.Load(@"D:\Documents\Stride Projects\MinimalTestProject\MinimalTestProject.sln", sessionResult);
 
                 sessionResult.Session.LoadMissingReferences(sessionResult);
 
@@ -71,7 +71,7 @@ namespace Stride.Editor.Avalonia
                     foreach (var asset in pack.Assets)
                     {
                         // TODO: how to find the default scene?
-                        if (asset.Id == new AssetId("5844eac5-b9de-4cbf-8145-b653b75caf98"))
+                        if (asset.Id == new AssetId("ac69f056-347d-4abd-8c64-b56bd8c2004a"))
                         {
                             var scene = (SceneAsset)asset.Asset;
 

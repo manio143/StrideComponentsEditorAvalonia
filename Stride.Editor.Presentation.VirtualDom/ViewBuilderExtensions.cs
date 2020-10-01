@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.FuncUI;
 using Microsoft.FSharp.Core;
+using System.Diagnostics;
 
 namespace Stride.Editor.Presentation.VirtualDom
 {
@@ -18,6 +19,7 @@ namespace Stride.Editor.Presentation.VirtualDom
 
         public static void UpdateRoot(this IViewBuilder viewBuilder, IContentControl control, IViewBuilder prevViewBuilder)
         {
+            Debug.Assert(!object.ReferenceEquals(viewBuilder, prevViewBuilder));
             var last = prevViewBuilder == null
                 ? FSharpOption<Types.IView>.None
                 : FSharpOption<Types.IView>.Some(prevViewBuilder.Build());
