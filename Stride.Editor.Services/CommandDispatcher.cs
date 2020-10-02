@@ -25,11 +25,22 @@ namespace Stride.Editor.Services
 
         public IUndoService UndoService { get; }
 
+        private bool ignoreCommands;
+        private object ignoreCommandsLock = new object();
+        private bool IgnoreCommands
+        {
+            get { lock (ignoreCommandsLock) return ignoreCommands; }
+            set { lock (ignoreCommandsLock) ignoreCommands = value; }
+        }
+
         private HashSet<IAssetEditor> UpdateView = new HashSet<IAssetEditor>();
 
         /// <inheritdoc/>
         public void Dispatch<TEditor>(IEditorCommand<TEditor> editorCommand) where TEditor : class, IAssetEditor
         {
+            if (IgnoreCommands)
+                return;
+
             TEditor found = null;
             foreach (var active in activeEditors)
                 if (active is TEditor activeEditor)
@@ -87,6 +98,10 @@ namespace Stride.Editor.Services
                 activeEditors.Remove(existing);
 
             activeEditors.Add(editor);
+
+            lock (UpdateView)
+                UpdateView.Add(editor);
+
             return existing != null;
         }
 
@@ -105,8 +120,13 @@ namespace Stride.Editor.Services
                     UpdateView.Clear();
                 }
 
+                IgnoreCommands = true; // ignore commands during view update
+                // this is because FuncUI executes subscriptions on creation
+                
                 foreach (var editor in local)
-                    AssetEditorViewUpdater.UpdateAssetEditorView(editor);
+                    await AssetEditorViewUpdater.UpdateAssetEditorView(editor);
+
+                IgnoreCommands = false;
             }
         }
     }

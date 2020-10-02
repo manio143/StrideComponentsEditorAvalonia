@@ -93,7 +93,6 @@ namespace Stride.Editor.Avalonia
 
                                 var sceneEditor = new SceneEditor(scene);
                                 commandDispatcher.SetActiveEditor(sceneEditor);
-                                viewUpdater.UpdateAssetEditorView(sceneEditor);
                             });
                         }
                     }

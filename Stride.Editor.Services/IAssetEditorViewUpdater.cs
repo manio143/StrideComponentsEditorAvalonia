@@ -1,4 +1,5 @@
 ﻿using Stride.Editor.Design;
+using System.Threading.Tasks;
 
 namespace Stride.Editor.Services
 {
@@ -7,6 +8,6 @@ namespace Stride.Editor.Services
         /// <summary>
         /// Invoke a UI update of the specified <paramref name="editor"/>.
         /// </summary>
-        void UpdateAssetEditorView(IAssetEditor editor);
+        Task UpdateAssetEditorView(IAssetEditor editor);
     }
 }

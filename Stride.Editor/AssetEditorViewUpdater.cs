@@ -9,6 +9,7 @@ using Stride.Editor.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Stride.Editor
 {
@@ -26,7 +27,7 @@ namespace Stride.Editor
         private Dictionary<Type, Type> viewCache = new Dictionary<Type, Type>();
         private IViewBuilder lastView;
 
-        public void UpdateAssetEditorView(IAssetEditor editor)
+        public async Task UpdateAssetEditorView(IAssetEditor editor)
         {
             Type editorViewType;
             if (!viewCache.TryGetValue(editor.GetType(), out editorViewType))
@@ -35,20 +36,20 @@ namespace Stride.Editor
                 viewCache.Add(editor.GetType(), editorViewType);
             }
 
+            // creating view has to happen on the UI thread because some data structures
+            // e.g. Grid.ColumnsDefinitions require that
+            if (Dispatcher.UIThread.CheckAccess())
+                CreateAndUpdateView(editor, editorViewType);
+            else
+                await Dispatcher.UIThread.InvokeAsync(() => CreateAndUpdateView(editor, editorViewType));
+        }
+
+        private void CreateAndUpdateView(IAssetEditor editor, Type editorViewType)
+        {
             var editorView = (IViewBase)Activator.CreateInstance(editorViewType, Services);
             var view = editorView.CreateView(editor);
 
-            // Skip update if views are equal (note: mostly for debugging, as UpdateRoot also checks that)
-            if (!view.Equals(lastView))
-            {
-                if (Dispatcher.UIThread.CheckAccess())
-                    view.UpdateRoot(container, lastView);
-                else
-                {
-                    var capture = lastView;
-                    Dispatcher.UIThread.Post(() => view.UpdateRoot(container, capture));
-                }
-            }
+            view.UpdateRoot(container, lastView);
 
             lastView = view;
         }
