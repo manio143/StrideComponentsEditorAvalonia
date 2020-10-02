@@ -1,10 +1,8 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Threading;
 using Stride.Core;
 using Stride.Core.Extensions;
 using Stride.Editor.Design;
 using Stride.Editor.Presentation;
-using Stride.Editor.Presentation.VirtualDom;
 using Stride.Editor.Services;
 using System;
 using System.Collections.Generic;
@@ -17,15 +15,15 @@ namespace Stride.Editor
     {
         public AssetEditorViewUpdater(IServiceRegistry serviceRegistry, ContentControl container)
         {
-            this.container = container;
+            ViewContainer = new ViewContainer(container, ViewBuilder);
             Services = serviceRegistry;
         }
 
         public IServiceRegistry Services { get; }
 
-        private ContentControl container;
+        private ViewContainer ViewContainer { get; }
+
         private Dictionary<Type, Type> viewCache = new Dictionary<Type, Type>();
-        private IViewBuilder lastView;
 
         public async Task UpdateAssetEditorView(IAssetEditor editor)
         {
@@ -36,22 +34,20 @@ namespace Stride.Editor
                 viewCache.Add(editor.GetType(), editorViewType);
             }
 
-            // creating view has to happen on the UI thread because some data structures
-            // e.g. Grid.ColumnsDefinitions require that
-            if (Dispatcher.UIThread.CheckAccess())
-                CreateAndUpdateView(editor, editorViewType);
-            else
-                await Dispatcher.UIThread.InvokeAsync(() => CreateAndUpdateView(editor, editorViewType));
+            var editorView = (IViewBase)Activator.CreateInstance(editorViewType, Services);
+            await ViewContainer.Update(new ViewUpdateContext { Editor = editor, View = editorView });
         }
 
-        private void CreateAndUpdateView(IAssetEditor editor, Type editorViewType)
+        private static IViewBuilder ViewBuilder(object context)
         {
-            var editorView = (IViewBase)Activator.CreateInstance(editorViewType, Services);
-            var view = editorView.CreateView(editor);
+            var viewUpdateContext = (ViewUpdateContext)context;
+            return viewUpdateContext.View.CreateView(viewUpdateContext.Editor);
+        }
 
-            view.UpdateRoot(container, lastView);
-
-            lastView = view;
+        private class ViewUpdateContext
+        {
+            public IViewBase View { get; set; }
+            public IAssetEditor Editor { get; set; }
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Avalonia;
-using System;
-using System.Threading;
+using Avalonia.ReactiveUI;
 
 namespace Stride.Editor.Avalonia
 {
@@ -13,18 +12,12 @@ namespace Stride.Editor.Avalonia
         {
             BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
-            // run app with more stack space (8MB)
-            //var t = new Thread(new ThreadStart(
-            //    () => BuildAvaloniaApp()
-            //        .StartWithClassicDesktopLifetime(args)),
-            //    8 * 1024 * 1024);
-            //t.Start();
-            //t.Join();
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
+                .UseReactiveUI()
                 .UsePlatformDetect();
     }
 }

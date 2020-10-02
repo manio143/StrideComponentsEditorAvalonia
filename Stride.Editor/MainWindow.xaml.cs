@@ -11,7 +11,10 @@ using Stride.Core.Assets;
 using Stride.Editor.Avalonia.EntityHierarchy.Components;
 using Stride.Editor.Avalonia.EntityHierarchy.Components.Views;
 using Stride.Editor.Commands;
+using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Design.SceneEditor;
+using Stride.Editor.Presentation;
+using Stride.Editor.Presentation.Core;
 using Stride.Editor.Presentation.SceneEditor;
 using Stride.Editor.Presentation.VirtualDom;
 using Stride.Editor.Services;
@@ -30,6 +33,7 @@ namespace Stride.Editor.Avalonia
         private AssetEditorViewUpdater viewUpdater;
         private CommandDispatcher commandDispatcher;
         private UndoService undoService;
+        private ViewContainer menuViewContainer;
         public bool IsLoading { get; set; }
         public MainWindow()
         {
@@ -37,7 +41,10 @@ namespace Stride.Editor.Avalonia
 #if DEBUG
             this.AttachDevTools();
 #endif
-            // We're binding menu to some methods on this class
+            var menuContainer = this.FindControl<ContentControl>("MenuContainer");
+            menuViewContainer = new ViewContainer(menuContainer, _ => new MenuView(Services).CreateView(BuildMenu()));
+            menuViewContainer.Update(null).Wait();
+
             DataContext = this;
 
             viewUpdater = new AssetEditorViewUpdater(Services, this.FindControl<ContentControl>("AssetEditorContainer"));
@@ -46,8 +53,7 @@ namespace Stride.Editor.Avalonia
             undoService = new UndoService();
             undoService.StateChanged += () =>
             {
-                this.CanUndo = undoService.CanUndo;
-                this.CanRedo = undoService.CanRedo;
+                menuViewContainer.Update(null);
             }; // refresh menu
             Services.AddService<IUndoService>(undoService);
 
@@ -104,6 +110,39 @@ namespace Stride.Editor.Avalonia
         public bool CanRedo { get; set; }
         public void Undo() => undoService.Undo();
         public void Redo() => undoService.Redo();
+
+        private IEnumerable<MenuItemViewModel> BuildMenu() => new[]
+        {
+            new MenuItemViewModel
+            {
+                Header = "_File",
+                Items = new[]
+                {
+                    new MenuItemViewModel { Header = "_Open", Command = ReactiveCommand.Create(OpenScene) },
+                    new MenuItemViewModel { Header = "E_xit", Command = ReactiveCommand.Create(Close) },
+                }
+            },
+            new MenuItemViewModel
+            {
+                Header = "_Edit",
+                Items = new[]
+                {
+                    new MenuItemViewModel
+                    {
+                        Header = "_Undo",
+                        IsEnabled = undoService?.CanUndo ?? false,
+                        Command = ReactiveCommand.Create(Undo),
+                    },
+                    new MenuItemViewModel
+                    {
+                        Header = "_Redo",
+                        IsEnabled = undoService?.CanRedo ?? false,
+                        Command = ReactiveCommand.Create(Redo),
+                    },
+                }
+            },
+        };
+
 
         private void InitializeComponent()
         {

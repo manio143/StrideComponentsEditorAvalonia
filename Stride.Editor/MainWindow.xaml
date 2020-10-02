@@ -6,17 +6,7 @@
         x:Class="Stride.Editor.Avalonia.MainWindow"
         Title="Hello World">
   <DockPanel Name="DockPanel">
-    <Menu DockPanel.Dock="Top" VerticalAlignment="Top">
-      <MenuItem Header="_File">
-        <MenuItem Header="_Open.." Command="{Binding OpenScene}" />
-        <Separator/>
-        <MenuItem Header="_Exit" Command="{Binding Close}"/>
-      </MenuItem>
-      <MenuItem Header="_Edit">
-        <MenuItem Header="_Undo" IsEnabled="{Binding CanUndo}" Command="{Binding Undo}" />
-        <MenuItem Header="_Redo" IsEnabled="{Binding CanRedo}" Command="{Binding Redo}"/>
-      </MenuItem>
-    </Menu>
+    <ContentControl Name="MenuContainer" DockPanel.Dock="Top"/>
     <ContentControl Name="AssetEditorContainer" />
   </DockPanel>
 </Window>
