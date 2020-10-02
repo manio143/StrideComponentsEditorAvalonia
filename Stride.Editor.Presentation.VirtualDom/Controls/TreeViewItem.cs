@@ -1,4 +1,5 @@
 ﻿using Avalonia.FuncUI;
+using Avalonia.FuncUI.DSL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,12 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
 
         public Action<bool> OnSelected
         {
-            set { Subscribe(Avalonia.Controls.TreeViewItem.IsSelectedProperty, value); }
+            set { Subscribe(Avalonia.Controls.TreeViewItem.IsSelectedProperty, value, SubPatchOptions.Always); }
         }
 
         public Action<bool> OnExpanded
         {
-            set { Subscribe(Avalonia.Controls.TreeViewItem.IsExpandedProperty, value); }
+            set { Subscribe(Avalonia.Controls.TreeViewItem.IsExpandedProperty, value, SubPatchOptions.Always); }
         }
 
         public bool IsSelected

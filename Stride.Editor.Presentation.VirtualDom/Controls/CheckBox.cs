@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Avalonia.FuncUI.DSL;
+using System;
 
 namespace Stride.Editor.Presentation.VirtualDom.Controls
 {
@@ -18,7 +17,7 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
 
         public Action<bool> OnEnabled
         {
-            set { Subscribe(Avalonia.Controls.CheckBox.IsEnabledProperty, value); }
+            set { Subscribe(Avalonia.Controls.CheckBox.IsEnabledProperty, value, SubPatchOptions.Always); }
         }
 
         public bool? IsChecked
@@ -28,7 +27,7 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
 
         public Action<bool?> OnChecked
         {
-            set { Subscribe(Avalonia.Controls.CheckBox.IsCheckedProperty, value); }
+            set { Subscribe(Avalonia.Controls.CheckBox.IsCheckedProperty, value, SubPatchOptions.Always); }
         }
     }
 }

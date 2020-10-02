@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using Stride.Core;
+﻿using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Editor.Design.SceneEditor;
 using System.Linq;
