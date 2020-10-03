@@ -4,21 +4,37 @@ My idea for this weekend is to try creating a very simple component editor for S
 
 ## Tasks
 
-- [ ] Open a scene file
-- [ ] View the entity hierarchy
-- [ ] Select an entity and open its components in a panel
-- [ ] View components properties
-- [ ] Edit components properties
+- [ ] Open a project file
+- [ ] Select a scene
+- [x] View the entity hierarchy
+- [x] Select an entity and open its components in a panel
+- [x] View components properties
+- [x] Edit components properties
 - [ ] Save the modified scene
 
+### Enhancements
+
+- [ ] Styling
+- [ ] Custom views for:
+    - [ ] `Vector2`
+    - [ ] `Vector3`
+    - [ ] `Vector4`
+    - [ ] `Quaternion`
+    - [ ] `Color3`
+    - [ ] `Color4`
+    - [ ] Entity References
+    - [ ] EntityComponent References
+    - [ ] Abstract members (i.e. interface/abstract class implementations)
+    - [ ] Asset References
+- [ ] Member inlining
+- [ ] Drag and drop entities onto component members with compatibility checking
+- [ ] Hiding members with `[Display(Browsable = false)]` and `bool Enabled`
+
 ## Architecture
-I really like the idea of Model View Update. So given a model you have a View "function" that renders that model. For one model there may be a few different ways of viewing it. Then the view can update the model by passing a Command with the Model to an Update "function". I know that there's [Avalonia.FuncUI](https://github.com/AvaloniaCommunity/Avalonia.FuncUI) but it's written in F# and I don't see a point in complicating Stride by doing multi language development.
+I really like the idea of Model View Update. So given a model you have a View "function" that renders that model. For one model there may be a few different ways of viewing it. Then the view can update the model by passing a Command with the Model to an Update "function".
 
-As such I'll try to implement the following:
+In my implementation the `Stride.Editor.Presentation` module depends on `Design` and `Commands`. Each view implements `IView<TViewModel, TViewObjectBase>`. Here `TViewObjectBase` equals `IViewBuilder`, a virtual view builder of the [Avalonia.FuncUI](https://github.com/AvaloniaCommunity/Avalonia.FuncUI) for which I've written a wrapper.
 
-- Model is any class
-- Command is any class
-- View is a class implementing `IView<TModel, TCommand>`, which can have XAML associated with it.
-- Update is a class implementing `IUpdate<TModel, TCommand>` and is the behaviour implementation, called by the View
+Views inherit from the `ViewBase<TViewModel>` which imposes dependency on the `IViewBuilder` and requires an `IServiceRegistry` in its constructor. Through this registry the views get access to a command dispatcher which is used for creating view model updates.
 
-I'm a little uncertain on the details of practicallity of the above. I'll see if it works when I start implementing it.
+Command dispatcher processes commands, modifies the view model and schedules an update to the view. View updater takes the current view model state, runs it through the view objects and gets a virtual control hierarchy, which is then compared to a previous state and the difference is applied to the actual Avalonia UI controls.
