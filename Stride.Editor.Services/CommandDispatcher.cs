@@ -129,5 +129,18 @@ namespace Stride.Editor.Services
                 IgnoreCommands = false;
             }
         }
+
+        /// <inheritdoc/>
+        public void DispatchCore(IReversibleCommand reversibleCommand)
+        {
+            if (IgnoreCommands)
+                return;
+
+            reversibleCommand.Apply();
+            UndoService.RegisterCommand(reversibleCommand);
+            lock (UpdateView)
+                foreach (var editor in activeEditors)
+                    UpdateView.Add(editor);
+        }
     }
 }

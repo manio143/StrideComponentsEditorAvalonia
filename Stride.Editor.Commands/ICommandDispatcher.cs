@@ -11,6 +11,12 @@ namespace Stride.Editor.Commands
             where TEditor : class, IAssetEditor;
 
         /// <summary>
+        /// Executes command, registers it in undo/redo service, updates view.
+        /// </summary>
+        /// <param name="reversibleCommand"></param>
+        void DispatchCore(IReversibleCommand reversibleCommand);
+
+        /// <summary>
         /// Dispatch a command to be applied to <paramref name="editor"/>.
         /// </summary>
         /// <remarks>

@@ -14,6 +14,7 @@ using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Design.SceneEditor;
 using Stride.Editor.Presentation;
 using Stride.Editor.Presentation.Core;
+using Stride.Editor.Presentation.Core.Member;
 using Stride.Editor.Presentation.SceneEditor;
 using Stride.Editor.Presentation.VirtualDom;
 using Stride.Editor.Services;
@@ -60,6 +61,7 @@ namespace Stride.Editor.Avalonia
             Services.AddService<ICommandDispatcher>(commandDispatcher);
 
             Services.AddService<IMemberViewProvider<IViewBuilder>>(new MemberViewProvider(Services));
+            DefaultMemberViews.Register(Services);
         }
 
         public async void OpenScene()
