@@ -12,6 +12,7 @@ namespace Stride.Editor.Presentation.Core.Member
         {
             var provider = services.GetSafeServiceAs<IMemberViewProvider<IViewBuilder>>();
             Register(provider, new BoolMemberView(services));
+            Register(provider, new NumberMemberView(services));
             Register(provider, new StringMemberView(services));
         }
         private static void Register(IMemberViewProvider<IViewBuilder> provider, MemberViewBase memberView)

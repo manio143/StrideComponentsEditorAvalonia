@@ -11,8 +11,6 @@ namespace Stride.Editor.Presentation.Core
 {
     public class MenuView : ViewBase<IEnumerable<MenuItemViewModel>>
     {
-        private IEnumerable<MenuItemViewModel> menuItems;
-
         public MenuView(IServiceRegistry services) : base(services)
         {
         }
