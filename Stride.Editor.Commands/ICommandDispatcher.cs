@@ -1,4 +1,5 @@
 ﻿using Stride.Editor.Design;
+using System.Windows.Input;
 
 namespace Stride.Editor.Commands
 {
@@ -15,6 +16,11 @@ namespace Stride.Editor.Commands
         /// </summary>
         /// <param name="reversibleCommand"></param>
         void DispatchCore(IReversibleCommand reversibleCommand);
+
+        /// <summary>
+        /// Executes command, updates view.
+        /// </summary>
+        void DispatchCore(ICommand command);
 
         /// <summary>
         /// Dispatch a command to be applied to <paramref name="editor"/>.

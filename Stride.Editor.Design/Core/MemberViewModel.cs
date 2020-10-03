@@ -1,5 +1,7 @@
 ﻿using Stride.Core.Reflection;
 using Stride.Editor.Design.Core.StringUtils;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Stride.Editor.Design.Core
 {
@@ -9,6 +11,7 @@ namespace Stride.Editor.Design.Core
         {
             Source = owner;
             MemberDescriptor = memberDescriptor;
+            Parent = parent;
             Name = memberDescriptor.Name.CamelcaseToSpaces();
         }
 
@@ -39,5 +42,17 @@ namespace Stride.Editor.Design.Core
         }
 
         public bool? IsExpanded { get; set; }
+
+        // lazily computed - only if used by the structured member view
+        private List<MemberViewModel> children;
+        public List<MemberViewModel> Children
+        {
+            get
+            {
+                if (children == null)
+                    children = new List<MemberViewModel>(TypeDescriptor.Members.Select(m => new MemberViewModel(Value, m, this)));
+                return children;
+            }
+        }
     }
 }

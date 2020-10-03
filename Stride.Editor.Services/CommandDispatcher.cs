@@ -4,6 +4,7 @@ using Stride.Editor.Commands;
 using Stride.Editor.Design;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Stride.Editor.Services
 {
@@ -138,6 +139,17 @@ namespace Stride.Editor.Services
 
             reversibleCommand.Apply();
             UndoService.RegisterCommand(reversibleCommand);
+            lock (UpdateView)
+                foreach (var editor in activeEditors)
+                    UpdateView.Add(editor);
+        }
+
+        public void DispatchCore(ICommand command)
+        {
+            if (IgnoreCommands)
+                return;
+
+            command.Execute(null);
             lock (UpdateView)
                 foreach (var editor in activeEditors)
                     UpdateView.Add(editor);
