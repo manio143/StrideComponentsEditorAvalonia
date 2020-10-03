@@ -14,12 +14,12 @@ namespace Stride.Editor.Design.SceneEditor
             Name = entityDesign.Entity.Name;
             IsFolder = false;
             Source = entityDesign;
+            Components = Source.Entity.Components.Select(comp => new EntityComponentViewModel(comp)).ToList();
         }
 
         public EntityDesign Source { get; }
 
-        public IEnumerable<EntityComponentViewModel> Components
-            => Source.Entity.Components.Select(comp => new EntityComponentViewModel(comp));
+        public List<EntityComponentViewModel> Components { get; }
 
         /// <summary>
         /// Recursively create hierarchy of entities by populating <see cref="HierarchyItemViewModel.Children"/>.

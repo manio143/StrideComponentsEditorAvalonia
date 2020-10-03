@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Editor.Commands;
 using Stride.Editor.Commands.SceneEditor;
+using Stride.Editor.Design.Core;
 using Stride.Editor.Design.SceneEditor;
 using Stride.Editor.Presentation.Core;
 using System;
@@ -15,11 +16,11 @@ namespace Stride.Editor.Presentation.SceneEditor
     {
         public EntityComponentView(IServiceRegistry services) : base(services)
         {
-            memberView = new MemberView(services);
+            memberView = services.GetSafeServiceAs<IMemberViewProvider<IViewBuilder>>();
             dispatcher = services.GetSafeServiceAs<ICommandDispatcher>();
         }
 
-        private MemberView memberView;
+        private IMemberViewProvider<IViewBuilder> memberView;
         private ICommandDispatcher dispatcher;
 
         public override IViewBuilder CreateView(EntityComponentViewModel viewModel)
@@ -28,6 +29,7 @@ namespace Stride.Editor.Presentation.SceneEditor
             {
                 Header = CreateHeader(viewModel),
                 IsExpanded = viewModel.IsExpanded,
+                OnExpanded = (expand) => dispatcher.Dispatch(new ExpandEntityComponentCommand(viewModel, expand)),
                 Content = new Virtual.ItemsControl
                 {
                     Items = viewModel.ComponentMembers.Select(cm => memberView.CreateView(cm)),

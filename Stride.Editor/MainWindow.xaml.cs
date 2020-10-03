@@ -8,9 +8,8 @@ using ReactiveUI;
 using Stride.Assets.Entities;
 using Stride.Core;
 using Stride.Core.Assets;
-using Stride.Editor.Avalonia.EntityHierarchy.Components;
-using Stride.Editor.Avalonia.EntityHierarchy.Components.Views;
 using Stride.Editor.Commands;
+using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Design.SceneEditor;
 using Stride.Editor.Presentation;
@@ -59,6 +58,8 @@ namespace Stride.Editor.Avalonia
 
             commandDispatcher = new CommandDispatcher(Services);
             Services.AddService<ICommandDispatcher>(commandDispatcher);
+
+            Services.AddService<IMemberViewProvider<IViewBuilder>>(new MemberViewProvider(Services));
         }
 
         public async void OpenScene()

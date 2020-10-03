@@ -21,5 +21,10 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
         {
             set { Property(Avalonia.Controls.TextBlock.HorizontalAlignmentProperty, value); }
         }
+
+        public bool IsEnabled
+        {
+            set { Property(Avalonia.Controls.TextBlock.IsEnabledProperty, value); }
+        }
     }
 }
