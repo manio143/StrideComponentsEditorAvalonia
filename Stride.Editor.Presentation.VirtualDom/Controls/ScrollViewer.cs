@@ -6,7 +6,7 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
 {
     public class ScrollViewer : ViewBuilder<Avalonia.Controls.ScrollViewer>
     {
-        public IViewBuilder Content
+        public new IViewBuilder Content
         {
             set { Content(Avalonia.Controls.ScrollViewer.ContentProperty, value?.Build()); }
         }

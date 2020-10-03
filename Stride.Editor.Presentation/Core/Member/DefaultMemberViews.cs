@@ -14,6 +14,7 @@ namespace Stride.Editor.Presentation.Core.Member
             Register(provider, new BoolMemberView(services));
             Register(provider, new NumberMemberView(services));
             Register(provider, new StringMemberView(services));
+            Register(provider, new EnumMemberView(services));
         }
         private static void Register(IMemberViewProvider<IViewBuilder> provider, MemberViewBase memberView)
         {
