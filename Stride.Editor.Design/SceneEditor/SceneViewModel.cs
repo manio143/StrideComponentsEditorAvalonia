@@ -3,6 +3,7 @@ using Stride.Core.Assets;
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Stride.Editor.Design.SceneEditor
@@ -12,11 +13,22 @@ namespace Stride.Editor.Design.SceneEditor
         public SceneViewModel(SceneAsset sceneAsset)
         {
             if (sceneAsset == null) throw new ArgumentNullException(nameof(sceneAsset));
-            Source = sceneAsset;
-            Items = BuildHierarchyTree(Source);
+            AssetSource = sceneAsset;
+            Items = BuildHierarchyTree(AssetSource.Hierarchy.RootParts, AssetSource.Hierarchy.Parts);
         }
 
-        public SceneAsset Source { get; }
+        public SceneViewModel(Scene scene)
+        {
+            if (scene == null) throw new ArgumentNullException(nameof(scene));
+            GameSource = scene;
+            Items = BuildHierarchyTree(GameSource.Entities,
+                new Dictionary<Guid, EntityDesign>(GameSource.Entities
+                    .Select(e => new KeyValuePair<Guid, EntityDesign>(e.Id, new EntityDesign(e)))));
+        }
+
+        public SceneAsset AssetSource { get; }
+
+        public Scene GameSource { get; }
 
         public List<HierarchyItemViewModel> Items { get; }
 
@@ -35,13 +47,13 @@ namespace Stride.Editor.Design.SceneEditor
             return null;
         }
 
-        private static List<HierarchyItemViewModel> BuildHierarchyTree(SceneAsset scene)
+        private static List<HierarchyItemViewModel> BuildHierarchyTree(IList<Entity> entities, IDictionary<Guid, EntityDesign> designData)
         {
             var result = new List<HierarchyItemViewModel>();
             var folders = new List<FolderViewModel>();
 
-            foreach (var entity in scene.Hierarchy.RootParts)
-                AddRootEntity(entity, scene.Hierarchy.Parts, folders, result);
+            foreach (var entity in entities)
+                AddRootEntity(entity, designData, folders, result);
 
             folders.Sort(new HierarchyItemViewModelComparer());
             result.InsertRange(0, folders);
@@ -49,12 +61,12 @@ namespace Stride.Editor.Design.SceneEditor
             return result;
         }
 
-        private static void AddRootEntity(Entity entity, AssetPartCollection<EntityDesign, Entity> parts, List<FolderViewModel> folders, List<HierarchyItemViewModel> result)
+        private static void AddRootEntity(Entity entity, IDictionary<Guid, EntityDesign> designData, List<FolderViewModel> folders, List<HierarchyItemViewModel> result)
         {
-            var entityDesign = parts[entity.Id];
+            var entityDesign = designData[entity.Id];
 
             var viewModel = new EntityViewModel(entityDesign);
-            viewModel.AddChildren(parts);
+            viewModel.AddChildren(designData);
 
             if (!String.IsNullOrEmpty(entityDesign.Folder))
             {

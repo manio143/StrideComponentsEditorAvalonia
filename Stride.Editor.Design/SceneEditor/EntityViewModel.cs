@@ -25,13 +25,13 @@ namespace Stride.Editor.Design.SceneEditor
         /// Recursively create hierarchy of entities by populating <see cref="HierarchyItemViewModel.Children"/>.
         /// </summary>
         /// <param name="parts">Collection of <see cref="EntityDesign"/> sources.</param>
-        public void AddChildren(AssetPartCollection<EntityDesign, Entity> parts)
+        public void AddChildren(IDictionary<Guid, EntityDesign> designData)
         {
             foreach (var child in Source.Entity.GetChildren())
             {
-                var childVM = new EntityViewModel(parts[child.Id]);
+                var childVM = new EntityViewModel(designData[child.Id]);
                 this.Children.Add(childVM);
-                childVM.AddChildren(parts);
+                childVM.AddChildren(designData);
             }
         }
 

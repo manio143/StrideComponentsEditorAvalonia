@@ -22,6 +22,7 @@ My idea for this weekend is to try creating a very simple component editor for S
     - [ ] `Quaternion`
     - [ ] `Color3`
     - [ ] `Color4`
+    - [ ] Collections (lists/arrays/dictionaries)
     - [ ] Entity References
     - [ ] EntityComponent References
     - [ ] Abstract members (i.e. interface/abstract class implementations)
