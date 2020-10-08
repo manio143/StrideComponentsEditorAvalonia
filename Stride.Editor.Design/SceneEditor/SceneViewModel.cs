@@ -21,9 +21,7 @@ namespace Stride.Editor.Design.SceneEditor
         {
             if (scene == null) throw new ArgumentNullException(nameof(scene));
             GameSource = scene;
-            Items = BuildHierarchyTree(GameSource.Entities,
-                new Dictionary<Guid, EntityDesign>(GameSource.Entities
-                    .Select(e => new KeyValuePair<Guid, EntityDesign>(e.Id, new EntityDesign(e)))));
+            Items = BuildHierarchyTree(GameSource.Entities, MapEntityById(GameSource.Entities));
         }
 
         public SceneAsset AssetSource { get; }
@@ -122,6 +120,23 @@ namespace Stride.Editor.Design.SceneEditor
                 folderViewModel.Children.Sort(new HierarchyItemViewModelComparer());
             }
             return folderViewModel;
+        }
+
+        private static Dictionary<Guid, EntityDesign> MapEntityById(IEnumerable<Entity> entities)
+        {
+            var dict = new Dictionary<Guid, EntityDesign>();
+
+            static void Traverse(Entity e, Dictionary<Guid, EntityDesign> d)
+            {
+                d.Add(e.Id, new EntityDesign(e));
+                foreach (var child in e.GetChildren())
+                    Traverse(child, d);
+            }
+
+            foreach (var entity in entities)
+                Traverse(entity, dict);
+            
+            return dict;
         }
     }
 }
