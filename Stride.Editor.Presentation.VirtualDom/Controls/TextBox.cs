@@ -16,5 +16,10 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
         {
             set { Subscribe(Avalonia.Controls.TextBox.TextProperty, value, SubPatchOptions.Always); }
         }
+
+        public int MaxLength
+        {
+            set { Property(Avalonia.Controls.TextBox.MaxLengthProperty, value); }
+        }
     }
 }
