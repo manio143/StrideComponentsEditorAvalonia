@@ -13,13 +13,13 @@ namespace Stride.Editor
         {
             ViewContainer = new ViewContainer(container, ViewBuilder);
             Services = serviceRegistry;
-            Session = Services.GetSafeServiceAs<SessionService>();
+            Session = Services.GetSafeServiceAs<Session>();
             ViewRegistry = Services.GetSafeServiceAs<ViewRegistry>();
         }
 
         public IServiceRegistry Services { get; }
 
-        private SessionService Session { get; }
+        private Session Session { get; }
         private ViewRegistry ViewRegistry { get; }
 
         private ViewContainer ViewContainer { get; }

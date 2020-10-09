@@ -15,7 +15,7 @@ namespace Stride.Editor.Services
             Services = serviceRegistry;
             ViewUpdater = serviceRegistry.GetSafeServiceAs<IViewUpdater>();
             UndoService = serviceRegistry.GetSafeServiceAs<IUndoService>();
-            Session = serviceRegistry.GetSafeServiceAs<SessionService>();
+            Session = serviceRegistry.GetSafeServiceAs<Session>();
         }
 
         private Task Worker;
@@ -25,7 +25,7 @@ namespace Stride.Editor.Services
 
         private IViewUpdater ViewUpdater { get; }
         private IUndoService UndoService { get; }
-        private SessionService Session { get; }
+        private Session Session { get; }
 
         private bool ignoreCommands;
         private object ignoreCommandsLock = new object();

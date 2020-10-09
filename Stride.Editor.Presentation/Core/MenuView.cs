@@ -9,17 +9,17 @@ using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.Core
 {
-    public class MenuView : ViewBase<IEnumerable<MenuItemViewModel>>
+    public class MenuView : ViewBase<MenuViewModel>
     {
         public MenuView(IServiceRegistry services) : base(services)
         {
         }
 
-        public override IViewBuilder CreateView(IEnumerable<MenuItemViewModel> viewModel)
+        public override IViewBuilder CreateView(MenuViewModel viewModel)
         {
             return new Virtual.Menu
             {
-                Items = viewModel.Select(CreateMenuItem)
+                Items = viewModel.Items.Select(CreateMenuItem)
             };
         }
 
