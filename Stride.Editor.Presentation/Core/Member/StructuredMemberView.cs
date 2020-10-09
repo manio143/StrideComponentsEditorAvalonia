@@ -47,7 +47,14 @@ namespace Stride.Editor.Presentation.Core.Member
             return new Virtual.Expander
             {
                 IsExpanded = viewModel.IsExpanded ?? false,
-                OnExpanded = (expand) => dispatcher.DispatchCore(new ExpandMemberCommand(viewModel, expand)),
+                OnExpanded = (expand) =>
+                    dispatcher.Dispatch(
+                        new ExpandMemberCommand(),
+                        new ExpandMemberCommand.Context
+                        {
+                            ViewModel = viewModel,
+                            Expand = expand,
+                        }),
                 Header = new Virtual.DockPanel
                 {
                     Children = new IViewBuilder[]

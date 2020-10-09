@@ -24,7 +24,14 @@ namespace Stride.Editor.Presentation.Core.Member
             return new Virtual.CheckBox
             {
                 IsChecked = (bool)viewModel.Value,
-                OnChecked = (value) => dispatcher.DispatchCore(new UpdateMemberValueCommand(viewModel, value)),
+                OnChecked = (value) => 
+                    dispatcher.Dispatch(
+                        new UpdateMemberValueCommand(), 
+                        new UpdateMemberValueCommand.Context
+                        {
+                            ViewModel = viewModel,
+                            Value = value,
+                        }),
             };
         }
     }

@@ -2,18 +2,15 @@
 
 namespace Stride.Editor.Commands.SceneEditor
 {
-    public class SelectEntityCommand : IEditorCommand<Design.SceneEditor.SceneEditor>
+    /// <summary>
+    /// Modifies the <see cref="Design.SceneEditor.SceneEditor.SelectedEntity"/> property.
+    /// </summary>
+    public class SelectEntityCommand : ICommand<ContextWithActiveEditor<EntityViewModel>>
     {
-        public EntityViewModel EntityViewModel { get; }
-
-        public SelectEntityCommand(EntityViewModel entityViewModel)
+        public void Execute(ContextWithActiveEditor<EntityViewModel> context)
         {
-            EntityViewModel = entityViewModel;
-        }
-
-        public void Apply(Design.SceneEditor.SceneEditor editor)
-        {
-            editor.SelectedEntity = EntityViewModel;
+            (context.ActiveEditor as Design.SceneEditor.SceneEditor)
+                .SelectedEntity = context.Context;
         }
     }
 }

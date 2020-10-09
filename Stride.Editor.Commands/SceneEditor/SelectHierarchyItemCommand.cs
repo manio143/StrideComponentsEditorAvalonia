@@ -2,20 +2,20 @@
 
 namespace Stride.Editor.Commands.SceneEditor
 {
-    public class SelectHierarchyItemCommand : IEditorCommand<Design.SceneEditor.SceneEditor>
+    /// <summary>
+    /// Modifies the <see cref="HierarchyItemViewModel.IsSelected"/> property.
+    /// </summary>
+    public class SelectHierarchyItemCommand : ICommand<SelectHierarchyItemCommand.Context>
     {
-        public SelectHierarchyItemCommand(HierarchyItemViewModel hierarchyItem, bool selected)
+        public struct Context
         {
-            HierarchyItem = hierarchyItem;
-            Selected = selected;
+            public HierarchyItemViewModel ViewModel { get; set; }
+            public bool Selected { get; set; }
         }
 
-        private HierarchyItemViewModel HierarchyItem { get; }
-        private bool Selected { get; }
-
-        public void Apply(Design.SceneEditor.SceneEditor editor)
+        public void Execute(Context context)
         {
-            HierarchyItem.IsSelected = Selected;
+            context.ViewModel.IsSelected = context.Selected;
         }
     }
 }

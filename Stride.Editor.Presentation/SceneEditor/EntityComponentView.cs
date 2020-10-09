@@ -29,7 +29,14 @@ namespace Stride.Editor.Presentation.SceneEditor
             {
                 Header = CreateHeader(viewModel),
                 IsExpanded = viewModel.IsExpanded,
-                OnExpanded = (expand) => dispatcher.Dispatch(new ExpandEntityComponentCommand(viewModel, expand)),
+                OnExpanded = (expand) =>
+                    dispatcher.Dispatch(
+                        new ExpandEntityComponentCommand(),
+                        new ExpandEntityComponentCommand.Context
+                        {
+                            ViewModel = viewModel,
+                            Expand = expand,
+                        }),
                 Content = new Virtual.ItemsControl
                 {
                     Items = viewModel.ComponentMembers.Select(cm => memberView.CreateView(cm)),
@@ -51,7 +58,13 @@ namespace Stride.Editor.Presentation.SceneEditor
                         OnChecked = (check) =>
                         {
                             if (viewModel.IsEnablable)
-                                dispatcher.Dispatch(new EnableEntityComponentCommand(viewModel, check ?? false));
+                                dispatcher.Dispatch(
+                                    new EnableEntityComponentCommand(),
+                                    new EnableEntityComponentCommand.Context
+                                    {
+                                        ViewModel = viewModel,
+                                        Enable = check ?? false,
+                                    });
                         },
                     },
                     new Virtual.TextBlock

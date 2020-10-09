@@ -2,20 +2,20 @@
 
 namespace Stride.Editor.Commands.SceneEditor
 {
-    public class ExpandEntityComponentCommand : IEditorCommand<Design.SceneEditor.SceneEditor>
+    /// <summary>
+    /// Modifies te <see cref="EntityComponentViewModel.IsExpanded"/> property.
+    /// </summary>
+    public class ExpandEntityComponentCommand : ICommand<ExpandEntityComponentCommand.Context>
     {
-        public ExpandEntityComponentCommand(EntityComponentViewModel viewModel, bool expand)
+        public struct Context
         {
-            ViewModel = viewModel;
-            Expand = expand;
+            public EntityComponentViewModel ViewModel { get; set; }
+            public bool Expand { get; set; }
         }
 
-        private EntityComponentViewModel ViewModel { get; }
-        private bool Expand { get; }
-
-        public void Apply(Design.SceneEditor.SceneEditor editor)
+        public void Execute(Context context)
         {
-            ViewModel.IsExpanded = Expand;
+            context.ViewModel.IsExpanded = context.Expand;
         }
     }
 }

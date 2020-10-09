@@ -2,25 +2,25 @@
 
 namespace Stride.Editor.Commands.SceneEditor
 {
-    public class EnableEntityComponentCommand : IReversibleEditorCommand<Design.SceneEditor.SceneEditor>
+    /// <summary>
+    /// Modifies the <see cref="EntityComponentViewModel.IsEnabled"/> property.
+    /// </summary>
+    public class EnableEntityComponentCommand : IReversibleCommand<EnableEntityComponentCommand.Context>
     {
-        public EnableEntityComponentCommand(EntityComponentViewModel viewModel, bool enable)
+        public struct Context
         {
-            ViewModel = viewModel;
-            Enable = enable;
+            public EntityComponentViewModel ViewModel { get; set; }
+            public bool Enable { get; set; }
         }
 
-        private EntityComponentViewModel ViewModel { get; }
-        private bool Enable { get; }
-
-        public void Apply(Design.SceneEditor.SceneEditor editor)
+        public void Reverse(Context context)
         {
-            ViewModel.IsEnabled = Enable;
+            context.ViewModel.IsEnabled = !context.Enable;
         }
 
-        public void Undo(Design.SceneEditor.SceneEditor editor)
+        public void Execute(Context context)
         {
-            ViewModel.IsEnabled = !Enable;
+            context.ViewModel.IsEnabled = context.Enable;
         }
     }
 }

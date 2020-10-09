@@ -1,158 +1,101 @@
 ﻿using Stride.Core;
-using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
 using Stride.Editor.Commands;
-using Stride.Editor.Design;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Stride.Editor.Services
 {
     public class CommandDispatcher : ICommandDispatcher
     {
+        private static Logger Logger = GlobalLogger.GetLogger(nameof(CommandDispatcher));
+
         public CommandDispatcher(IServiceRegistry serviceRegistry)
         {
             Services = serviceRegistry;
-            AssetEditorViewUpdater = serviceRegistry.GetSafeServiceAs<IAssetEditorViewUpdater>();
+            ViewUpdater = serviceRegistry.GetSafeServiceAs<IViewUpdater>();
             UndoService = serviceRegistry.GetSafeServiceAs<IUndoService>();
-            Ticker = Task.Run(Tick);
+            Session = serviceRegistry.GetSafeServiceAs<SessionService>();
         }
 
-        private readonly Task Ticker;
+        private Task Worker;
+        private readonly Queue<(ICommand, object)> executionQueue = new Queue<(ICommand, object)>();
 
         public IServiceRegistry Services { get; }
 
-        public IAssetEditorViewUpdater AssetEditorViewUpdater { get; }
-
-        public IUndoService UndoService { get; }
+        private IViewUpdater ViewUpdater { get; }
+        private IUndoService UndoService { get; }
+        private SessionService Session { get; }
 
         private bool ignoreCommands;
         private object ignoreCommandsLock = new object();
-        private bool IgnoreCommands
-        {
-            get { lock (ignoreCommandsLock) return ignoreCommands; }
-            set { lock (ignoreCommandsLock) ignoreCommands = value; }
-        }
-
-        private HashSet<IAssetEditor> UpdateView = new HashSet<IAssetEditor>();
 
         /// <inheritdoc/>
-        public void Dispatch<TEditor>(IEditorCommand<TEditor> editorCommand) where TEditor : class, IAssetEditor
+        public bool Enabled
         {
-            if (IgnoreCommands)
+            get { lock (ignoreCommandsLock) return !ignoreCommands; }
+            set { lock (ignoreCommandsLock) ignoreCommands = !value; }
+        }
+
+        /// <inheritdoc/>
+        public void Dispatch(ICommand command, object context)
+        {
+            if (!Enabled)
                 return;
 
-            TEditor found = null;
-            foreach (var active in activeEditors)
-                if (active is TEditor activeEditor)
-                {
-                    editorCommand.Apply(activeEditor);
-                    found = activeEditor;
+            lock (executionQueue)
+                executionQueue.Enqueue((command, context));
 
-                    if (editorCommand is IReversibleEditorCommand<TEditor> reversible)
-                        UndoService.RegisterCommand(new ReversibleEditorCommand<TEditor>(this, reversible, activeEditor));
-                    
-                    break;
-                }
-
-            if (found != null)
-                lock (UpdateView)
-                    UpdateView.Add(found);
-        }
-
-        /// <inheritdoc/>
-        public void DispatchDirectApply<TEditor>(TEditor editor, IEditorCommand<TEditor> editorCommand) where TEditor : class, IAssetEditor
-        {
-            editorCommand.Apply(editor);
-            if (activeEditors.Contains(editor))
-                lock (UpdateView)
-                    UpdateView.Add(editor);
-        }
-
-        /// <inheritdoc/>
-        public void DispatchDirectUndo<TEditor>(TEditor editor, IReversibleEditorCommand<TEditor> editorCommand) where TEditor : class, IAssetEditor
-        {
-            editorCommand.Undo(editor);
-            if (activeEditors.Contains(editor))
-                lock (UpdateView)
-                    UpdateView.Add(editor);
-        }
-
-        private FastCollection<IAssetEditor> activeEditors = new FastCollection<IAssetEditor>();
-
-        /// <summary>
-        /// Set active editor for type <typeparamref name="TEditor"/>.
-        /// </summary>
-        /// <returns>True if another editor of the same type was active, false otherwise.</returns>
-        public bool SetActiveEditor<TEditor>(TEditor editor) where TEditor : class, IAssetEditor
-        {
-            TEditor existing = null;
-
-            foreach (var active in activeEditors)
-                if (active is TEditor activeEditor)
-                {
-                    existing = activeEditor;
-                    break;
-                }
-
-            if (existing != null)
-                activeEditors.Remove(existing);
-
-            activeEditors.Add(editor);
-
-            lock (UpdateView)
-                UpdateView.Add(editor);
-
-            return existing != null;
-        }
-
-        public async Task Tick()
-        {
-            while (true)
+            if (Worker.IsFaulted)
             {
-                await Task.Delay(16); // 60 fps refresh rate
-                FastList<IAssetEditor> local;
-                lock (UpdateView)
-                {
-                    if (UpdateView.Count == 0)
-                        continue;
-
-                    local = new FastList<IAssetEditor>(UpdateView);
-                    UpdateView.Clear();
-                }
-
-                IgnoreCommands = true; // ignore commands during view update
-                // this is because FuncUI executes subscriptions on creation
-                
-                foreach (var editor in local)
-                    await AssetEditorViewUpdater.UpdateAssetEditorView(editor);
-
-                IgnoreCommands = false;
+                Logger.Error("Command dispatcher's worker has faulter.", Worker.Exception);
+                Worker = null;
             }
+
+            if (Worker == null)
+                Worker = Task.Run(ProcessCommands);
         }
 
         /// <inheritdoc/>
-        public void DispatchCore(IReversibleCommand reversibleCommand)
-        {
-            if (IgnoreCommands)
-                return;
+        public void Dispatch<T>(ICommand<T> command, T context) => Dispatch(command, context);
 
-            reversibleCommand.Apply();
-            UndoService.RegisterCommand(reversibleCommand);
-            lock (UpdateView)
-                foreach (var editor in activeEditors)
-                    UpdateView.Add(editor);
+        /// <inheritdoc/>
+        public void DispatchToActiveEditor<T>(ICommand<ContextWithActiveEditor<T>> command, T context)
+        {
+            var activeEditor = Session.EditorViewModel.ActiveEditor;
+            if (activeEditor == null)
+                throw new System.InvalidOperationException("Cannot dispatch to active editor when it is null.");
+
+            Dispatch(command, new ContextWithActiveEditor<T>
+            {
+                ActiveEditor = activeEditor,
+                Context = context,
+            });
         }
 
-        public void DispatchCore(ICommand command)
+        private async Task ProcessCommands()
         {
-            if (IgnoreCommands)
-                return;
+            await Task.Delay(2); // wait for all commands from a single UI action to get added to the queue
 
-            command.Execute(null);
-            lock (UpdateView)
-                foreach (var editor in activeEditors)
-                    UpdateView.Add(editor);
+            for(;;)
+            {
+                (ICommand cmd, object ctx) item;
+
+                lock(executionQueue)
+                {
+                    if (executionQueue.Count == 0)
+                        break;
+
+                    item = executionQueue.Dequeue();
+                }
+
+                item.cmd.Execute(item.ctx);
+
+                if (item.cmd is IReversibleCommand rev && !(item.cmd is ICommand<UndoService>))
+                    UndoService.RegisterCommand(rev, item.ctx);
+            }
+
+            await ViewUpdater.UpdateView(this);
         }
     }
 }

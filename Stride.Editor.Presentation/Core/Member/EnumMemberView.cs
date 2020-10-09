@@ -39,7 +39,14 @@ namespace Stride.Editor.Presentation.Core.Member
                             Content = new Virtual.TextBlock { Text = names[i] }
                         }),
                     SelectedIndex = Array.IndexOf(values, viewModel.Value),
-                    OnSelected = (index) => dispatcher.DispatchCore(new UpdateMemberValueCommand(viewModel, values[index])),
+                    OnSelected = (index) =>
+                    dispatcher.Dispatch(
+                        new UpdateMemberValueCommand(),
+                        new UpdateMemberValueCommand.Context
+                        {
+                            ViewModel = viewModel,
+                            Value = values[index],
+                        }),
                 };
             }
             else

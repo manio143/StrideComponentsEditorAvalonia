@@ -1,20 +1,19 @@
 ﻿namespace Stride.Editor.Commands
 {
-    public interface IReversibleCommand
+    public interface IReversibleCommand : ICommand
     {
         /// <summary>
-        /// Executes command.
+        /// Executes a reversal of the command under provided <paramref name="context"/>.
         /// </summary>
-        void Apply();
+        void Reverse(object context);
+    }
 
+    public interface IReversibleCommand<T> : IReversibleCommand, ICommand<T>
+    {
         /// <summary>
-        /// Reverses the command.
+        /// Executes a reversal of the command under provided <paramref name="context"/>.
         /// </summary>
-        void Undo();
-
-        /// <summary>
-        /// The context object this command operates on.
-        /// </summary>
-        object Context { get; }
+        void Reverse(T context);
+        void IReversibleCommand.Reverse(object context) => Reverse((T)context);
     }
 }

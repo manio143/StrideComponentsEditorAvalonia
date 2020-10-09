@@ -2,20 +2,20 @@
 
 namespace Stride.Editor.Commands.SceneEditor
 {
-    public class ExpandHierarchyItemCommand : IEditorCommand<Design.SceneEditor.SceneEditor>
+    /// <summary>
+    /// Modifies the <see cref="HierarchyItemViewModel.IsExpanded"/> property.
+    /// </summary>
+    public class ExpandHierarchyItemCommand : ICommand<ExpandHierarchyItemCommand.Context>
     {
-        public ExpandHierarchyItemCommand(HierarchyItemViewModel hierarchyItem, bool expanded)
+        public struct Context
         {
-            HierarchyItem = hierarchyItem;
-            Expanded = expanded;
+            public HierarchyItemViewModel ViewModel { get; set; }
+            public bool Expand { get; set; }
         }
 
-        private HierarchyItemViewModel HierarchyItem { get; }
-        private bool Expanded { get; }
-
-        public void Apply(Design.SceneEditor.SceneEditor editor)
+        public void Execute(Context context)
         {
-            HierarchyItem.IsExpanded = Expanded;
+            context.ViewModel.IsExpanded = context.Expand;
         }
     }
 }

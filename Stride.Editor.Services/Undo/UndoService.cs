@@ -7,17 +7,23 @@ namespace Stride.Editor.Services
     // TODO: add logging
     public class UndoService : IUndoService
     {
+        private struct StackEntry
+        {
+            public IReversibleCommand Command { get; set; }
+            public object Context { get; set; }
+        }
+
         // TODO: implement this as a cyclic buffer of some size to forget commands in the past.
-        private Stack<IReversibleCommand> undoStack = new Stack<IReversibleCommand>();
-        private Stack<IReversibleCommand> redoStack = new Stack<IReversibleCommand>();
+        private Stack<StackEntry> undoStack = new Stack<StackEntry>();
+        private Stack<StackEntry> redoStack = new Stack<StackEntry>();
 
         public event Action StateChanged;
         private void OnStateChange() => StateChanged?.Invoke();
 
         /// <inheritdoc/>
-        public void RegisterCommand(IReversibleCommand command)
+        public void RegisterCommand(IReversibleCommand command, object context)
         {
-            undoStack.Push(command);
+            undoStack.Push(new StackEntry { Command = command, Context = context });
             redoStack.Clear();
             OnStateChange();
         }
@@ -53,9 +59,9 @@ namespace Stride.Editor.Services
                 OnStateChange();
         }
 
-        private void Clear(ref Stack<IReversibleCommand> stack, object context)
+        private void Clear(ref Stack<StackEntry> stack, object context)
         {
-            var temporaryStack = new Stack<IReversibleCommand>(stack.Count);
+            var temporaryStack = new Stack<StackEntry>(stack.Count);
             while (stack.TryPop(out var command))
             {
                 // move commands that don't match context onto temporary stack
@@ -71,9 +77,11 @@ namespace Stride.Editor.Services
         {
             if (!CanRedo)
                 throw new InvalidOperationException("Could not Redo.");
-            var command = redoStack.Pop();
-            command.Apply();
-            undoStack.Push(command);
+            var entry = redoStack.Pop();
+            
+            entry.Command.Execute(entry.Context);
+            
+            undoStack.Push(entry);
             OnStateChange();
         }
 
@@ -82,9 +90,11 @@ namespace Stride.Editor.Services
         {
             if (!CanUndo)
                 throw new InvalidOperationException("Could not Undo.");
-            var command = undoStack.Pop();
-            command.Undo();
-            redoStack.Push(command);
+            var entry = undoStack.Pop();
+            
+            entry.Command.Reverse(entry.Context);
+            
+            redoStack.Push(entry);
             OnStateChange();
         }
     }

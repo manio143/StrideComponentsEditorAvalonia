@@ -51,7 +51,14 @@ namespace Stride.Editor.Presentation.Core.Member
                             Maximum = upper,
                             SmallChange = slider.Value.SmallStep,
                             LargeChange = slider.Value.LargeStep,
-                            OnValue = (value) => dispatcher.DispatchCore(new UpdateMemberValueCommand(viewModel, Convert(viewModel, Math.Round(value, precision)))),
+                            OnValue = (value) =>
+                                dispatcher.Dispatch(
+                                    new UpdateMemberValueCommand(),
+                                    new UpdateMemberValueCommand.Context
+                                    {
+                                        ViewModel = viewModel,
+                                        Value = Convert(viewModel, Math.Round(value, precision)),
+                                    }),
                         },
                         new Virtual.TextBlock
                         {
@@ -67,7 +74,14 @@ namespace Stride.Editor.Presentation.Core.Member
                 Maximum = upper,
                 OnValue = (arg) =>
                 {
-                    dispatcher.DispatchCore(new UpdateMemberValueCommand(viewModel, Convert(viewModel, Math.Round(arg.NewValue, precision))));
+
+                    dispatcher.Dispatch(
+                        new UpdateMemberValueCommand(),
+                        new UpdateMemberValueCommand.Context
+                        {
+                            ViewModel = viewModel,
+                            Value = Convert(viewModel, Math.Round(arg.NewValue, precision)),
+                        });
                     arg.Handled = true;
                 },
                 FormatString = format,

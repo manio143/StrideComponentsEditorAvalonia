@@ -8,7 +8,7 @@ namespace Stride.Editor.Services
         /// Adds <paramref name="command"/> to te undo stack and clears redo stack.
         /// </summary>
         /// <param name="command">Executed command that can be undone.</param>
-        void RegisterCommand(IReversibleCommand command);
+        void RegisterCommand(IReversibleCommand command, object context);
 
         /// <summary>
         /// True if there is an action on the undo stack that can be undone.

@@ -26,8 +26,22 @@ namespace Stride.Editor.Presentation.SceneEditor
                 Items = viewModel.Children.Select(c => CreateView(c)),
                 IsExpanded = viewModel.IsExpanded,
                 IsSelected = viewModel.IsSelected,
-                OnSelected = selected => dispatcher.Dispatch(new SelectHierarchyItemCommand(viewModel, selected)),
-                OnExpanded = expanded => dispatcher.Dispatch(new ExpandHierarchyItemCommand(viewModel, expanded)),
+                OnSelected = selected =>
+                    dispatcher.Dispatch(
+                        new SelectHierarchyItemCommand(),
+                        new SelectHierarchyItemCommand.Context
+                        {
+                            ViewModel = viewModel,
+                            Selected = selected,
+                        }),
+                OnExpanded = expanded =>
+                    dispatcher.Dispatch(
+                        new ExpandHierarchyItemCommand(),
+                        new ExpandHierarchyItemCommand.Context
+                        {
+                            ViewModel = viewModel,
+                            Expand = expanded,
+                        }),
             };
             return tvi;
         }

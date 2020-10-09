@@ -30,7 +30,7 @@ namespace Stride.Editor.Avalonia
     public class MainWindow : Window
     {
         private ServiceRegistry Services = new ServiceRegistry();
-        private AssetEditorViewUpdater viewUpdater;
+        private ViewUpdater viewUpdater;
         private CommandDispatcher commandDispatcher;
         private UndoService undoService;
         private ViewContainer menuViewContainer;
@@ -47,8 +47,11 @@ namespace Stride.Editor.Avalonia
 
             DataContext = this;
 
-            viewUpdater = new AssetEditorViewUpdater(Services, this.FindControl<ContentControl>("AssetEditorContainer"));
-            Services.AddService<IAssetEditorViewUpdater>(viewUpdater);
+            Services.AddService(new SessionService() { EditorViewModel = new EditorViewModel() });
+            Services.AddService(new ViewRegistry());
+
+            viewUpdater = new ViewUpdater(Services, this.FindControl<ContentControl>("AssetEditorContainer"));
+            Services.AddService<IViewUpdater>(viewUpdater);
 
             undoService = new UndoService();
             undoService.StateChanged += () =>
@@ -101,7 +104,7 @@ namespace Stride.Editor.Avalonia
                                 this.FindControl<DockPanel>("DockPanel").Children.Remove(loadingBlock);
 
                                 var sceneEditor = new SceneEditor(scene);
-                                commandDispatcher.SetActiveEditor(sceneEditor);
+                                //commandDispatcher.SetActiveEditor(sceneEditor);
                             });
                         }
                     }

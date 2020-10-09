@@ -2,29 +2,30 @@
 
 namespace Stride.Editor.Commands.Core
 {
-    public class UpdateMemberValueCommand : IReversibleCommand
+    /// <summary>
+    /// Modifies the <see cref="MemberViewModel.Value"/> property and allows reserving the change.
+    /// </summary>
+    public class UpdateMemberValueCommand : IReversibleCommand<UpdateMemberValueCommand.Context>
     {
-        public UpdateMemberValueCommand(MemberViewModel viewModel, object value)
+        /// <summary>
+        /// Stateful context that allows swapping <see cref="ViewModel"/>'s value with a new one.
+        /// </summary>
+        public class Context
         {
-            ViewModel = viewModel;
-            Value = value;
+            public MemberViewModel ViewModel { get; set; }
+            public object Value { get; set; }
+            public object OldValue { get; set; }
         }
 
-        private MemberViewModel ViewModel { get; }
-        private object Value { get; }
-        private object OldValue { get; set; }
-
-        public object Context { get; set; }
-
-        public void Apply()
+        public void Reverse(Context context)
         {
-            OldValue = ViewModel.Value;
-            ViewModel.Value = Value;
+            context.ViewModel.Value = context.OldValue;
         }
 
-        public void Undo()
+        public void Execute(Context context)
         {
-            ViewModel.Value = OldValue;
+            context.OldValue = context.ViewModel.Value;
+            context.ViewModel.Value = context.Value;
         }
     }
 }

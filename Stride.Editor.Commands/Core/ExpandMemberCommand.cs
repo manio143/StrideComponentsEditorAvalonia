@@ -1,30 +1,21 @@
 ﻿using Stride.Editor.Design.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
 
 namespace Stride.Editor.Commands.Core
 {
-    // TODO: While ICommand seems like a decent interface (and potentially reusable across different places) I think it makes more sense to create a custom one during dispatcher rewrite
-    public class ExpandMemberCommand : ICommand
+    /// <summary>
+    /// Modifies the <see cref="MemberViewModel.IsExpanded"/> property.
+    /// </summary>
+    public class ExpandMemberCommand : ICommand<ExpandMemberCommand.Context>
     {
-        public ExpandMemberCommand(MemberViewModel viewModel, bool expand)
+        public struct Context
         {
-            ViewModel = viewModel;
-            Expand = expand;
+            public MemberViewModel ViewModel { get; set; }
+            public bool Expand { get; set; }
         }
 
-        private MemberViewModel ViewModel { get; }
-        private bool Expand { get; }
-
-        public event EventHandler CanExecuteChanged;
-
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
+        public void Execute(Context context)
         {
-            ViewModel.IsExpanded = Expand;
+            context.ViewModel.IsExpanded = context.Expand;
         }
     }
 }

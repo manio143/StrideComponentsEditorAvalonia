@@ -3,9 +3,8 @@ using Stride.Editor.Commands;
 using Stride.Editor.Commands.SceneEditor;
 using Stride.Editor.Design.SceneEditor;
 using System.Linq;
-using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 using Avalonia.Controls;
-using System.Collections;
+using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.SceneEditor
 {
@@ -42,7 +41,7 @@ namespace Stride.Editor.Presentation.SceneEditor
                     return;
 
                 var entityViewModel = (EntityViewModel)hierarchyItem;
-                dispatcher.Dispatch(new SelectEntityCommand(entityViewModel));
+                dispatcher.DispatchToActiveEditor(new SelectEntityCommand(), entityViewModel);
             }
         }
     }
