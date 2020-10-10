@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
+using Stride.Core.Diagnostics;
 
 namespace Stride.Editor
 {
@@ -10,6 +11,9 @@ namespace Stride.Editor
         // yet and stuff might break.
         public static void Main(string[] args)
         {
+            var logListener = new DebugLogListener();
+            GlobalLogger.GlobalMessageLogged += logListener;
+
             BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
         }

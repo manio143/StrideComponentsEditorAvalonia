@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Locator;
-using Stride.Core.Assets;
+﻿using Stride.Core.Assets;
 using Stride.Core.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -14,9 +13,6 @@ namespace Stride.Editor.Services
         public async Task<PackageSessionResult> LoadProject(string path)
         {
             // TODO: display a dialog box with load progress
-
-            // Register access to MSBuild assembly - required to load project dependencies
-            MSBuildLocator.RegisterDefaults(); // see https://github.com/microsoft/MSBuildLocator/issues/64
 
             // in this result will be any errors from loading the project
             var sessionResult = new PackageSessionResult();

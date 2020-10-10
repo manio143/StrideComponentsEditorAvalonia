@@ -35,7 +35,14 @@ namespace Stride.Editor
             Services.AddService<ICommandDispatcher>(new CommandDispatcher(Services));
             Services.AddService<IMemberViewProvider<IViewBuilder>>(new MemberViewProvider(Services));
 
-            // TODO: register plugins (remember to allow loading plugins dynamically)
+            var pluginRegistry = new PluginRegistry(Services);
+            pluginRegistry.RefreshAvailablePlugins();
+            
+            Services.AddService<PluginRegistry>(pluginRegistry);
+            
+            foreach (var initialPlugin in pluginRegistry.AvailablePlugins)
+                pluginRegistry.Register(initialPlugin);
+
             // TODO: render view
         }
 
