@@ -1,5 +1,6 @@
 ﻿using Avalonia.FuncUI;
 using Avalonia.FuncUI.DSL;
+using Avalonia.Interactivity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,11 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
         public object Header
         {
             set { Property(Avalonia.Controls.TreeViewItem.HeaderProperty, value); }
+        }
+
+        public Action<RoutedEventArgs> OnDoubleClick
+        {
+            set { Subscribe(Avalonia.Controls.TreeViewItem.DoubleTappedEvent, value, SubPatchOptions.Always); }
         }
     }
 }

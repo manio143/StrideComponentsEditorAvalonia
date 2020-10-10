@@ -1,8 +1,10 @@
 ﻿using Stride.Core;
 using Stride.Editor.Design;
+using Stride.Editor.Design.AssetBrowser;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Presentation;
+using Stride.Editor.Presentation.AssetBrowser;
 using Stride.Editor.Presentation.Core;
 using Stride.Editor.Presentation.Core.Member;
 using System;
@@ -19,6 +21,7 @@ namespace Stride.Editor.Plugins
             var viewRegistry = services.GetSafeServiceAs<ViewRegistry>();
             viewRegistry.RegisterView<MenuViewModel, MenuView>();
             viewRegistry.RegisterView<EditorViewModel, EditorView>();
+            viewRegistry.RegisterView<AssetBrowserViewModel, AssetBrowserView>();
 
             DefaultMemberViews.Register(services);
 
