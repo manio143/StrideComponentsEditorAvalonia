@@ -30,16 +30,9 @@ namespace Stride.Editor.Avalonia
             
             Services.AddService<Session>(Session);
             Services.AddService<ViewRegistry>(new ViewRegistry());
-
-            Session.ViewUpdater = new ViewUpdater(Services, this.Content as ContentControl);
-            Session.UndoService = new UndoService();
-            
-            Services.AddService<IViewUpdater>(Session.ViewUpdater);
-            Services.AddService<IUndoService>(Session.UndoService);
-
-            Session.CommandDispatcher = new CommandDispatcher(Services);
-            Services.AddService<ICommandDispatcher>(Session.CommandDispatcher);
-
+            Services.AddService<IViewUpdater>(new ViewUpdater(Services, this.Content as ContentControl));
+            Services.AddService<IUndoService>(new UndoService());
+            Services.AddService<ICommandDispatcher>(new CommandDispatcher(Services));
             Services.AddService<IMemberViewProvider<IViewBuilder>>(new MemberViewProvider(Services));
 
             // TODO: register plugins (remember to allow loading plugins dynamically)
