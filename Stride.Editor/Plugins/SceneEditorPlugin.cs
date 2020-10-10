@@ -15,5 +15,11 @@ namespace Stride.Editor.Plugins
 
             // TODO: register SceneEditor as an editor of SceneAsset
         }
+
+        public void UnregisterPlugin(IServiceRegistry services)
+        {
+            var viewRegistry = services.GetSafeServiceAs<ViewRegistry>();
+            viewRegistry.UnregisterView<SceneEditor, SceneEditorView>();
+        }
     }
 }

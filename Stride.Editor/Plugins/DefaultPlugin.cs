@@ -5,6 +5,7 @@ using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Presentation;
 using Stride.Editor.Presentation.Core;
 using Stride.Editor.Presentation.Core.Member;
+using System;
 
 namespace Stride.Editor.Plugins
 {
@@ -22,6 +23,11 @@ namespace Stride.Editor.Plugins
             DefaultMemberViews.Register(services);
 
             // TODO: register standard menu
+        }
+
+        public void UnregisterPlugin(IServiceRegistry services)
+        {
+            throw new InvalidOperationException("Default views should never be unregistered.");
         }
     }
 }

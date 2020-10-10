@@ -4,6 +4,7 @@ using Stride.Editor.Design;
 using Stride.Editor.Design.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
@@ -59,6 +60,13 @@ namespace Stride.Editor.Presentation.Core
                 CanBeApplied = canBeApplied,
                 View = view,
             });
+        }
+
+        public void UnregisterMemberView<TView>() where TView : IView<MemberViewModel, IViewBuilder>
+        {
+            var memberView = MemberViews.FirstOrDefault(m => m.View is TView);
+            if (memberView.View != null)
+                MemberViews.Remove(memberView);
         }
 
         private struct MemberView : IView<MemberViewModel, IViewBuilder>
