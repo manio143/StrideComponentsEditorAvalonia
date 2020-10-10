@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
 
-namespace Stride.Editor.Avalonia
+namespace Stride.Editor
 {
     class Program
     {

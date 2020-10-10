@@ -5,7 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 
-namespace Stride.Editor.Avalonia
+namespace Stride.Editor
 {
     public class App : Application
     {

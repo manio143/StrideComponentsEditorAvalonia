@@ -9,7 +9,7 @@ using Stride.Editor.Presentation.Core;
 using Stride.Editor.Services;
 using System;
 
-namespace Stride.Editor.Avalonia
+namespace Stride.Editor
 {
     public class MainWindow : Window
     {
