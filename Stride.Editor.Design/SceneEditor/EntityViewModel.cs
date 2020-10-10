@@ -1,5 +1,5 @@
 ﻿using Stride.Assets.Entities;
-using Stride.Core.Assets;
+using Stride.Editor.Design.Core.Hierarchy;
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
@@ -36,11 +36,11 @@ namespace Stride.Editor.Design.SceneEditor
         }
 
         /// <inheritdoc/>
-        public override EntityViewModel FindById(Guid entityId)
+        public override TChild FindById<TChild>(Guid entityId) where TChild : class
         {
             if (Source.Entity.Id == entityId)
-                return this;
-            return base.FindById(entityId);
+                return this as TChild;
+            return base.FindById<TChild>(entityId);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Stride.Editor.Design.SceneEditor;
+﻿using Stride.Editor.Design.Core.Hierarchy;
 
-namespace Stride.Editor.Commands.SceneEditor
+namespace Stride.Editor.Commands.Core.Hierarchy
 {
     /// <summary>
     /// Modifies the <see cref="HierarchyItemViewModel.IsExpanded"/> property.

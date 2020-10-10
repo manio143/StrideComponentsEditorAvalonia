@@ -1,5 +1,6 @@
 ﻿using Stride.Assets.Entities;
 using Stride.Core.Assets;
+using Stride.Editor.Design.Core.Hierarchy;
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace Stride.Editor.Design.SceneEditor
         {
             foreach (var item in Items)
             {
-                var evm = item.FindById(entityId);
+                var evm = item.FindById<EntityViewModel>(entityId);
                 if (evm != null)
                     return evm;
             }

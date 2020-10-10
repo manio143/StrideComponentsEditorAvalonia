@@ -1,4 +1,6 @@
-﻿namespace Stride.Editor.Design.SceneEditor
+﻿using Stride.Editor.Design.Core.Hierarchy;
+
+namespace Stride.Editor.Design.SceneEditor
 {
     public class FolderViewModel : HierarchyItemViewModel
     {

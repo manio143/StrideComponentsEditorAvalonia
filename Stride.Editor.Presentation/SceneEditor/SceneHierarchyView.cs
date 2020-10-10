@@ -5,6 +5,7 @@ using Stride.Editor.Design.SceneEditor;
 using System.Linq;
 using Avalonia.Controls;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
+using Stride.Editor.Design.Core.Hierarchy;
 
 namespace Stride.Editor.Presentation.SceneEditor
 {

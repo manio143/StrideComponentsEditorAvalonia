@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Stride.Editor.Design.SceneEditor
+namespace Stride.Editor.Design.Core.Hierarchy
 {
     public abstract class HierarchyItemViewModel
     {
@@ -31,14 +31,14 @@ namespace Stride.Editor.Design.SceneEditor
         public bool IsSelected { get; set; }
 
         /// <summary>
-        /// Find the <see cref="EntityViewModel"/> corresponding to an entity with <paramref name="entityId"/>. 
+        /// Find the child <typeparamref name="TChild"/> corresponding to an entity with <paramref name="id"/>. 
         /// </summary>
-        /// <returns>ViewModel for an entity with this Id, or null if not found.</returns>
-        public virtual EntityViewModel FindById(Guid entityId)
+        /// <returns>ViewModel for an child with this Id, or null if not found.</returns>
+        public virtual TChild FindById<TChild>(Guid id) where TChild : class
         {
             foreach (var child in Children)
             {
-                var evm = child.FindById(entityId);
+                var evm = child.FindById<TChild>(id);
                 if (evm != null)
                     return evm;
             }

@@ -1,7 +1,7 @@
 ﻿using Stride.Core;
 using Stride.Editor.Commands;
-using Stride.Editor.Commands.SceneEditor;
-using Stride.Editor.Design.SceneEditor;
+using Stride.Editor.Commands.Core.Hierarchy;
+using Stride.Editor.Design.Core.Hierarchy;
 using System.Linq;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 

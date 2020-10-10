@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Stride.Editor.Design.SceneEditor
+namespace Stride.Editor.Design.Core.Hierarchy
 {
     internal class HierarchyItemViewModelComparer : IComparer<HierarchyItemViewModel>
     {
