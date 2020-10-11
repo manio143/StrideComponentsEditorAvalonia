@@ -42,6 +42,8 @@ namespace Stride.Editor.Services
             if (openedEditorOfDesiredType == null)
             {
                 var newEditor = CreateEditorInstance(editorType, asset);
+                newEditor.AssetName = assetItem.Location.GetFileNameWithoutExtension();
+                openedEditors.Add(newEditor);
                 // TODO: add editor to the Session.EditorViewModel
             }
             else

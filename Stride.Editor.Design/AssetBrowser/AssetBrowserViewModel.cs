@@ -21,7 +21,7 @@ namespace Stride.Editor.Design.AssetBrowser
                     var url = asset.Location;
                     // note: should this be used for imported projects, we might want to add an additional filter to code assets, or not include them altogether (?)
                     var baseDirectory = asset.Asset is IProjectAsset ? "Code" : "Assets";
-                    var folderVM = packageVM.GetOrCreateFolder(url.GetFullDirectory() ?? "");
+                    var folderVM = packageVM.GetOrCreateFolder(baseDirectory + (url.GetFullDirectory() ?? ""));
                     var assetVM = new AssetItemViewModel(asset);
                     folderVM.Children.Add(assetVM);
                 }

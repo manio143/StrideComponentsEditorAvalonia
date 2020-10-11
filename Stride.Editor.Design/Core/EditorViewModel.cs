@@ -15,6 +15,6 @@ namespace Stride.Editor.Design.Core
 
         public IAssetEditor ActiveEditor => Tabs[ActiveTab] as IAssetEditor;
 
-        public IList<MenuItemViewModel> Menu { get; set; }
+        public MenuViewModel Menu { get; set; }
     }
 }

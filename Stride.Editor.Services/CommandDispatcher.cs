@@ -1,6 +1,7 @@
 ﻿using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Editor.Commands;
+using Stride.Editor.Design;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,6 +20,7 @@ namespace Stride.Editor.Services
         }
 
         private Task Worker;
+        private object WorkerLock = new object();
         private readonly Queue<(ICommand, object)> executionQueue = new Queue<(ICommand, object)>();
 
         public IServiceRegistry Services { get; }
@@ -46,18 +48,21 @@ namespace Stride.Editor.Services
             lock (executionQueue)
                 executionQueue.Enqueue((command, context));
 
-            if (Worker.IsFaulted)
+            lock (WorkerLock)
             {
-                Logger.Error("Command dispatcher's worker has faulter.", Worker.Exception);
-                Worker = null;
-            }
+                if (Worker != null && Worker.IsFaulted)
+                {
+                    Logger.Error("Command dispatcher's worker has faulter.", Worker.Exception);
+                    Worker = null;
+                }
 
-            if (Worker == null)
-                Worker = Task.Run(ProcessCommands);
+                if (Worker == null)
+                    Worker = Task.Run(ProcessCommands);
+            }
         }
 
         /// <inheritdoc/>
-        public void Dispatch<T>(ICommand<T> command, T context) => Dispatch(command, context);
+        public void Dispatch<T>(ICommand<T> command, T context) => Dispatch((ICommand)command, (object)context);
 
         /// <inheritdoc/>
         public void DispatchToActiveEditor<T>(ICommand<ContextWithActiveEditor<T>> command, T context)
@@ -95,7 +100,10 @@ namespace Stride.Editor.Services
                     UndoService.RegisterCommand(rev, item.ctx);
             }
 
-            await ViewUpdater.UpdateView(this);
+            lock (WorkerLock)
+                Worker = null; // queue has been processed, next dispatched command should spawn a new worker
+            
+            await ViewUpdater.UpdateView();
         }
     }
 }

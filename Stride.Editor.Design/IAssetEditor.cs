@@ -14,5 +14,10 @@ namespace Stride.Editor.Design
         /// Asset that is being edited.
         /// </summary>
         Asset Asset { get; }
+
+        /// <summary>
+        /// Name of the <see cref="Asset"/>.
+        /// </summary>
+        string AssetName { get; set; }
     }
 }

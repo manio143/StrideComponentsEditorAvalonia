@@ -6,6 +6,7 @@ using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Presentation;
 using Stride.Editor.Presentation.AssetBrowser;
 using Stride.Editor.Presentation.Core;
+using Stride.Editor.Presentation.Core.Docking;
 using Stride.Editor.Presentation.Core.Member;
 using System;
 
@@ -22,6 +23,8 @@ namespace Stride.Editor.Plugins
             viewRegistry.RegisterView<MenuViewModel, MenuView>();
             viewRegistry.RegisterView<EditorViewModel, EditorView>();
             viewRegistry.RegisterView<AssetBrowserViewModel, AssetBrowserView>();
+            viewRegistry.RegisterView<EditorTabViewModel, EditorTabView>();
+            viewRegistry.RegisterView<ToolTabViewModel, ToolTabView>();
 
             DefaultMemberViews.Register(services);
 

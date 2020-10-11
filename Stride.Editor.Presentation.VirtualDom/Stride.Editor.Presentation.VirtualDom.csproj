@@ -5,12 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.9" />
+    <PackageReference Include="Avalonia" Version="0.9.12" />
     <!--<PackageReference Include="Avalonia.Diagnostics" Version="0.9.9" />-->
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.9" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.9" />
-    <PackageReference Include="Dock.Avalonia" Version="0.9.9" />
-    <PackageReference Include="Dock.Avalonia.Themes.Default" Version="0.9.9" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.12" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />
+    <PackageReference Include="Dock.Avalonia" Version="0.9.12" />
+    <PackageReference Include="Dock.Model.Avalonia" Version="0.9.12" />
+    <PackageReference Include="Dock.Avalonia.Themes.Default" Version="0.9.12" />
     <PackageReference Include="FSharp.Core" Version="4.6.2" />
     <!--<PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.4.1" />-->
   </ItemGroup>

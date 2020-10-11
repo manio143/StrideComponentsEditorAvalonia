@@ -1,11 +1,12 @@
 ﻿using Microsoft.Build.Locator;
 using Stride.Core;
 using Stride.Core.Assets;
+using Stride.Editor.Design;
 using Stride.Editor.Design.Core;
 
 namespace Stride.Editor.Services
 {
-    public partial class Session
+    public partial class Session : IRootViewModelContainer
     {
         public Session()
         {
@@ -31,5 +32,7 @@ namespace Stride.Editor.Services
         /// Main service registry used across the application.
         /// </summary>
         public IServiceRegistry Services { get; set; }
+
+        EditorViewModel IRootViewModelContainer.RootViewModel => EditorViewModel;
     }
 }

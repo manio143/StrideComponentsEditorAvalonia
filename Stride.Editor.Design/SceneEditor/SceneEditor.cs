@@ -1,4 +1,5 @@
 ﻿using Stride.Assets.Entities;
+using Stride.Core;
 using Stride.Core.Assets;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace Stride.Editor.Design.SceneEditor
 {
     public class SceneEditor : IAssetEditor
     {
-        public SceneEditor(SceneAsset sceneAsset)
+        public SceneEditor(SceneAsset sceneAsset, IServiceRegistry services)
         {
             Asset = sceneAsset;
             Scene = new SceneViewModel(sceneAsset);
@@ -19,7 +20,8 @@ namespace Stride.Editor.Design.SceneEditor
             SelectedEntity.IsSelected = true;
         }
 
-        public SceneEditor(SceneAsset sceneAsset, Guid selectedEntity) : this(sceneAsset)
+        public SceneEditor(SceneAsset sceneAsset, Guid selectedEntity, IServiceRegistry services)
+            : this(sceneAsset, services)
         {
             SelectedEntity = Scene.FindById(selectedEntity);
         }
@@ -28,5 +30,6 @@ namespace Stride.Editor.Design.SceneEditor
         public EntityViewModel SelectedEntity { get; set; }
 
         public Asset Asset { get; }
+        public string AssetName { get; set; }
     }
 }

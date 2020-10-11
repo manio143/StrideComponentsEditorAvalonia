@@ -26,10 +26,11 @@ namespace Stride.Editor.Services
                 sessionResult.Session.LoadMissingReferences(sessionResult);
             }).ConfigureAwait(false);
 
-            // TODO: Load user assemblies into AppDomain
-            // foreach localpackage UpdateAssemblyReferences
-
             PackageSession = sessionResult.Session;
+
+            // TODO: Load user assemblies into AppDomain
+            foreach (var pkg in PackageSession.LocalPackages)
+                pkg.UpdateAssemblyReferences(GlobalLogger.GetLogger($"{nameof(Session)}.{nameof(pkg.UpdateAssemblyReferences)}"));
 
             // TODO: populate EditorViewModel with loaded Assets
 

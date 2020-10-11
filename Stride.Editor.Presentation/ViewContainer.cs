@@ -8,16 +8,22 @@ namespace Stride.Editor.Presentation
 {
     public class ViewContainer
     {
-        public ViewContainer(ContentControl container, Func<object, IViewBuilder> viewFactory)
+        public ViewContainer(ContentControl container, Func<object, IViewBuilder> viewFactory, Action<object> cleanup)
         {
             Container = container;
             ViewFactory = viewFactory;
+            Cleanup = cleanup;
         }
 
-        private ContentControl Container { get; }
+        public ContentControl Container { get; }
         private Func<object, IViewBuilder> ViewFactory { get; }
+        private Action<object> Cleanup { get; }
         private IViewBuilder LastView { get; set; }
 
+        /// <summary>
+        /// On the UI thread, creates a view from the <see cref="ViewFactory"/>, updates UI, calls <see cref="Cleanup"/>.
+        /// </summary>
+        /// <param name="context">Context passed to user methods</param>
         public async Task Update(object context)
         {
             // creating view has to happen on the UI thread because some data structures
@@ -34,6 +40,8 @@ namespace Stride.Editor.Presentation
             newView.UpdateRoot(Container, LastView);
 
             LastView = newView;
+
+            Cleanup(context);
         }
     }
 }

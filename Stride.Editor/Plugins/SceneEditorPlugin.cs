@@ -1,4 +1,5 @@
-﻿using Stride.Core;
+﻿using Stride.Assets.Entities;
+using Stride.Core;
 using Stride.Editor.Design;
 using Stride.Editor.Design.SceneEditor;
 using Stride.Editor.Presentation;
@@ -13,7 +14,8 @@ namespace Stride.Editor.Plugins
             var viewRegistry = services.GetSafeServiceAs<ViewRegistry>();
             viewRegistry.RegisterView<SceneEditor, SceneEditorView>();
 
-            // TODO: register SceneEditor as an editor of SceneAsset
+            var assetManager = services.GetSafeServiceAs<IAssetEditorRegistry>();
+            assetManager.RegisterAssetEditor<SceneAsset, SceneEditor>();
         }
 
         public void UnregisterPlugin(IServiceRegistry services)

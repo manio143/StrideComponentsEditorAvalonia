@@ -14,13 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.9" />
-    <!--<PackageReference Include="Avalonia.Diagnostics" Version="0.9.9" />-->
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.9" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.9" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Stride.Editor.Commands\Stride.Editor.Commands.csproj" />
     <ProjectReference Include="..\Stride.Editor.Design\Stride.Editor.Design.csproj" />
     <ProjectReference Include="..\Stride.Editor.Presentation.VirtualDom\Stride.Editor.Presentation.VirtualDom.csproj" />
