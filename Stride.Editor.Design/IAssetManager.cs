@@ -1,4 +1,5 @@
 ﻿using Stride.Core.Assets;
+using System;
 
 namespace Stride.Editor.Design
 {
@@ -7,6 +8,7 @@ namespace Stride.Editor.Design
         /// <summary>
         /// Opens a new editor for <paramref name="asset"/> or focuses on an existing one.
         /// </summary>
-        public void OpenAsset(AssetItem asset);
+        /// <param name="editorType">Optional: type of the editor to open the <paramref name="asset"/> with. If null, default editor will be selected.</param>
+        public void OpenAsset(AssetItem asset, Type editorType = null);
     }
 }

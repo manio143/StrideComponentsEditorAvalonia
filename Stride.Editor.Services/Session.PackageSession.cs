@@ -27,6 +27,7 @@ namespace Stride.Editor.Services
             }).ConfigureAwait(false);
 
             // TODO: Load user assemblies into AppDomain
+            // foreach localpackage UpdateAssemblyReferences
 
             PackageSession = sessionResult.Session;
 
