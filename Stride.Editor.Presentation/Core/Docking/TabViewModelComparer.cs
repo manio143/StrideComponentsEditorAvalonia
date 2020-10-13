@@ -46,8 +46,9 @@ namespace Stride.Editor.Presentation.Core.Docking
                 return false;
             if (!Enumerable.SequenceEqual(dock1.HiddenDockables, dock2.HiddenDockables, dockableComparer))
                 return false;
-            if (!Enumerable.SequenceEqual(dock1.PinnedDockables, dock2.PinnedDockables, dockableComparer))
-                return false;
+            if(dock1.PinnedDockables != null && dock2.PinnedDockables != null)
+                if (!Enumerable.SequenceEqual(dock1.PinnedDockables, dock2.PinnedDockables, dockableComparer))
+                    return false;
             if (!Equal(dock1.ActiveDockable, dock2.ActiveDockable))
                 return false;
             if (!Equal(dock1.FocusedDockable, dock2.FocusedDockable))
