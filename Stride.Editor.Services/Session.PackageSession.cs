@@ -1,5 +1,6 @@
 ﻿using Stride.Core.Assets;
 using Stride.Core.Diagnostics;
+using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,7 @@ namespace Stride.Editor.Services
     // See Stride.Core.Assets.Editor.SessionViewModel for reference implementation
     public partial class Session
     {
+        private static LoggingScope LoadProjectScope = new LoggingScope(GlobalLogger.GetLogger($"{nameof(Session)}.{nameof(LoadProject)}"));
         public async Task<PackageSessionResult> LoadProject(string path)
         {
             // TODO: display a dialog box with load progress
@@ -17,20 +19,25 @@ namespace Stride.Editor.Services
             // in this result will be any errors from loading the project
             var sessionResult = new PackageSessionResult();
 
-            // Force PackageSession.Load to be executed on the thread pool
-            // otherwise it would block execution and we want this process to be async
-            await Task.Run(() =>
+            using (var scope = new TimedScope(LoadProjectScope, TimedScope.Status.Failure))
             {
-                PackageSession.Load(path, sessionResult);
+                // Force PackageSession.Load to be executed on the thread pool
+                // otherwise it would block execution and we want this process to be async
+                await Task.Run(() =>
+                {
+                    PackageSession.Load(path, sessionResult);
 
-                sessionResult.Session.LoadMissingReferences(sessionResult);
-            }).ConfigureAwait(false);
+                    sessionResult.Session.LoadMissingReferences(sessionResult);
+                }).ConfigureAwait(false);
 
-            PackageSession = sessionResult.Session;
+                PackageSession = sessionResult.Session;
 
-            // TODO: Load user assemblies into AppDomain
-            foreach (var pkg in PackageSession.LocalPackages)
-                pkg.UpdateAssemblyReferences(GlobalLogger.GetLogger($"{nameof(Session)}.{nameof(pkg.UpdateAssemblyReferences)}"));
+                // TODO: Load user assemblies into AppDomain
+                foreach (var pkg in PackageSession.LocalPackages)
+                    pkg.UpdateAssemblyReferences(GlobalLogger.GetLogger($"{nameof(Session)}.{nameof(pkg.UpdateAssemblyReferences)}"));
+
+                scope.Result = TimedScope.Status.Success;
+            }
 
             // TODO: populate EditorViewModel with loaded Assets
 

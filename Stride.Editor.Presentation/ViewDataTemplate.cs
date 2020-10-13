@@ -2,9 +2,11 @@
 using Avalonia.Controls.Templates;
 using Dock.Model;
 using Stride.Core;
+using Stride.Core.Diagnostics;
 using Stride.Editor.Commands;
 using Stride.Editor.Design;
 using Stride.Editor.Design.Core;
+using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +21,10 @@ namespace Stride.Editor.Presentation
             ViewRegistry = services.GetSafeServiceAs<ViewRegistry>();
             RootVMContainer = services.GetSafeServiceAs<IRootViewModelContainer>();
         }
+
+        private static LoggingScope Logger = new LoggingScope(GlobalLogger.GetLogger(nameof(ViewDataTemplate)));
+
+        static ViewDataTemplate() { Logger.ActivateLog(LogMessageType.Debug); }
 
         private ViewRegistry ViewRegistry { get; }
 
@@ -43,6 +49,8 @@ namespace Stride.Editor.Presentation
             else if (viewModel is EditorViewModel)
                 id = "root";
             else throw new NotSupportedException();
+
+            Logger.Debug($"Building view for object '{id}'.");
 
             ViewContainer container;
             if (!views.TryGetValue(id, out container))
@@ -71,6 +79,8 @@ namespace Stride.Editor.Presentation
         {
             var viewUpdateContext = (ViewUpdateContext)context;
 
+            Logger.Debug($"Start creating view for '{viewUpdateContext.ViewModel.GetType()}'.");
+
             // We need to disable the dispatcher as events may fire during FuncUI subscription update
             viewUpdateContext.CommandDispatcher.Enabled = false;
 
@@ -82,6 +92,8 @@ namespace Stride.Editor.Presentation
             var viewUpdateContext = (ViewUpdateContext)context;
 
             viewUpdateContext.CommandDispatcher.Enabled = true;
+
+            Logger.Debug($"Finish creating view for '{viewUpdateContext.ViewModel.GetType()}'.");
         }
 
         /// <summary>
@@ -91,12 +103,26 @@ namespace Stride.Editor.Presentation
         /// </summary>
         public async Task UpdateView()
         {
-            var editorVM = RootVMContainer.RootViewModel;
-            await BuildAsync(editorVM);
+            using (var scope = new TimedScope(UpdateViewScope))
+            {
+                try
+                {
+                    var editorVM = RootVMContainer.RootViewModel;
+                    await BuildAsync(editorVM);
 
-            foreach (var tab in editorVM.Tabs.Keys)
-                await BuildAsync(tab);
+                    foreach (var tab in editorVM.Tabs.Keys)
+                        await BuildAsync(tab);
+                }
+                catch(Exception e)
+                {
+                    scope.Result = TimedScope.Status.Failure;
+                    scope.Error(e.Message, e);
+                    throw;
+                }
+            }
         }
+
+        private static LoggingScope UpdateViewScope = new LoggingScope(GlobalLogger.GetLogger($"{nameof(ViewDataTemplate)}.{nameof(UpdateView)}"));
 
         /// <summary>
         /// Context passed to the view factory for <see cref="ViewContainer"/>.
