@@ -1,5 +1,6 @@
 ﻿using Stride.Core;
 using Stride.Core.Diagnostics;
+using Stride.Core.Reflection;
 using Stride.Editor.Design;
 using Stride.Editor.Design.Core.Logging;
 using System;
@@ -64,7 +65,7 @@ namespace Stride.Editor.Services
         }
 
         /// <summary>
-        /// Searches through the assemblies loaded in the current AppDomain
+        /// Searches through the assemblies in <see cref="AssemblyRegistry"/> with the "editor" category
         /// looking for implementations of <see cref="IEditorPlugin"/> with empty constructor.
         /// Populates <see cref="AvailablePlugins"/>.
         /// </summary>
@@ -74,7 +75,7 @@ namespace Stride.Editor.Services
             
             availablePlugins.Clear();
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblies = AssemblyRegistry.Find(EditorAssemblyCategory.Editor);
             foreach (var assembly in assemblies)
             {
                 var plugins = assembly.GetTypes().Where(t => typeof(IEditorPlugin).IsAssignableFrom(t) && t.GetConstructor(new Type[0]) != null);
