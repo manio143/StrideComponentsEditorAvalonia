@@ -1,5 +1,6 @@
 ﻿using Stride.Core;
 using Stride.Core.Reflection;
+using System.Diagnostics;
 
 namespace Stride.Editor.Presentation
 {

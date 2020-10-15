@@ -1,6 +1,7 @@
 ﻿using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Editor.Design;
+using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Stride.Editor.Services
             Services = services;
         }
 
-        private static Logger Logger = GlobalLogger.GetLogger(nameof(PluginRegistry));
+        private static LoggingScope Logger = LoggingScope.Global(nameof(PluginRegistry));
 
         private IServiceRegistry Services { get; }
 
@@ -79,7 +80,7 @@ namespace Stride.Editor.Services
                 var plugins = assembly.GetTypes().Where(t => typeof(IEditorPlugin).IsAssignableFrom(t) && t.GetConstructor(new Type[0]) != null);
                 foreach (var plugin in plugins)
                 {
-                    Logger.Debug($"Found plugin {plugin.GetType().FullName}");
+                    Logger.Debug($"Found plugin {plugin.FullName}");
                     availablePlugins.Add((IEditorPlugin)Activator.CreateInstance(plugin));
                 }
             }

@@ -2,6 +2,7 @@
 using Stride.Core.Diagnostics;
 using Stride.Editor.Commands;
 using Stride.Editor.Design;
+using Stride.Editor.Design.Core.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace Stride.Editor.Services
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        private static Logger Logger = GlobalLogger.GetLogger(nameof(CommandDispatcher));
+        private static LoggingScope Logger = LoggingScope.Global(nameof(CommandDispatcher));
 
         public CommandDispatcher(IServiceRegistry serviceRegistry)
         {
@@ -36,7 +37,11 @@ namespace Stride.Editor.Services
         public bool Enabled
         {
             get { lock (ignoreCommandsLock) return !ignoreCommands; }
-            set { lock (ignoreCommandsLock) ignoreCommands = !value; }
+            set 
+            {
+                Logger.Debug($"Enabled set to {value}.");
+                lock (ignoreCommandsLock) ignoreCommands = !value;
+            }
         }
 
         /// <inheritdoc/>
@@ -45,6 +50,7 @@ namespace Stride.Editor.Services
             if (!Enabled)
                 return;
 
+            Logger.Debug($"Dispatching command {command.GetType()}.");
             lock (executionQueue)
                 executionQueue.Enqueue((command, context));
 

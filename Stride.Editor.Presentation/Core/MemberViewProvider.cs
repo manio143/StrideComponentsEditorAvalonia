@@ -1,17 +1,19 @@
 ﻿using Avalonia.Layout;
 using Stride.Core;
+using Stride.Core.Diagnostics;
 using Stride.Editor.Design;
 using Stride.Editor.Design.Core;
+using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.Core
 {
     public class MemberViewProvider : ViewBase<MemberViewModel>, IMemberViewProvider<IViewBuilder>
     {
+        private static LoggingScope Logger = LoggingScope.Global(nameof(MemberViewProvider));
         private readonly List<MemberView> MemberViews = new List<MemberView>();
         
         public MemberViewProvider(IServiceRegistry services) : base(services)
@@ -55,6 +57,7 @@ namespace Stride.Editor.Presentation.Core
 
         public void RegisterMemberView(Func<MemberViewModel, bool> canBeApplied, IView<MemberViewModel, IViewBuilder> view)
         {
+            Logger.Info($"Register MemberView {view.GetType()}.");
             MemberViews.Add(new MemberView
             {
                 CanBeApplied = canBeApplied,
@@ -66,7 +69,10 @@ namespace Stride.Editor.Presentation.Core
         {
             var memberView = MemberViews.FirstOrDefault(m => m.View is TView);
             if (memberView.View != null)
+            {
+                Logger.Info($"Unegister MemberView {memberView.View.GetType()}");
                 MemberViews.Remove(memberView);
+            }
         }
 
         private struct MemberView : IView<MemberViewModel, IViewBuilder>

@@ -31,6 +31,13 @@ namespace Stride.Editor.Design.Core.Logging
         }
 
         /// <summary>
+        /// Creates a new <see cref="LoggingScope"/> with a global logger, created with <see cref="GlobalLogger.GetLogger(string)"/>.
+        /// </summary>
+        /// <param name="module">Name of the module for logging</param>
+        public static LoggingScope Global(string module)
+            => new LoggingScope(GlobalLogger.GetLogger(module));
+
+        /// <summary>
         /// (Only when initialized with a <see cref="Stride.Core.Diagnostics.Logger"/> instance) <br/>
         /// Activates the log for this logger for a range of <see cref="LogMessageType"/>.
         /// </summary>

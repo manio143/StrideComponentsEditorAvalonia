@@ -6,6 +6,7 @@ using Stride.Editor.Commands;
 using Stride.Editor.Design;
 using Stride.Editor.Design.AssetBrowser;
 using Stride.Editor.Design.Core;
+using Stride.Editor.Design.Core.Logging;
 using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Presentation;
 using Stride.Editor.Presentation.Core;
@@ -26,6 +27,8 @@ namespace Stride.Editor
 #if DEBUG
             this.AttachDevTools();
 #endif
+            using var initScope = new TimedScope(LoggingScope.Global($"{nameof(MainWindow)}.InitializeServices"));
+
             Session = new Session();
 
             Session.EditorViewModel = new EditorViewModel();

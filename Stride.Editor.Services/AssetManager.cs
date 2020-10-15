@@ -1,6 +1,8 @@
 ﻿using Stride.Core;
 using Stride.Core.Assets;
+using Stride.Core.Diagnostics;
 using Stride.Editor.Design;
+using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace Stride.Editor.Services
     /// </summary>
     public class AssetManager : IAssetManager, IAssetEditorRegistry
     {
+        private static LoggingScope Logger = LoggingScope.Global(nameof(AssetManager));
         public AssetManager(IServiceRegistry services)
         {
             Services = services;
@@ -31,6 +34,7 @@ namespace Stride.Editor.Services
         /// <inheritdoc/>
         public void OpenAsset(AssetItem assetItem, Type editorType = null)
         {
+            Logger.Info($"Opening asset {assetItem.Asset.GetType()} \"{assetItem.Id}\"...");
             if (editorType == null)
                 editorType = GetDefaultEditor(assetItem.Asset.GetType());
 
@@ -41,6 +45,7 @@ namespace Stride.Editor.Services
 
             if (openedEditorOfDesiredType == null)
             {
+                Logger.Info($"Creating new editor '{editorType.FullName}' for asset \"{assetItem.Id}\"...");
                 var newEditor = CreateEditorInstance(editorType, asset);
                 newEditor.AssetName = assetItem.Location.GetFileNameWithoutExtension();
                 openedEditors.Add(newEditor);
@@ -99,6 +104,7 @@ namespace Stride.Editor.Services
             if (editorRegistry.Any(reg => reg.editorType == typeof(TAssetEditor)))
                 throw new InvalidOperationException($"An editor of type '{typeof(TAssetEditor).FullName}' has already been registered.");
 
+            Logger.Info($"Register editor '{typeof(TAssetEditor).FullName}' for assets of type '{typeof(TAsset)}'.");
             editorRegistry.Add((typeof(TAsset), typeof(TAssetEditor)));
         }
 
@@ -110,6 +116,7 @@ namespace Stride.Editor.Services
             if (entry.editorType == null)
                 throw new InvalidOperationException($"An editor of type '{typeof(TAssetEditor).FullName}' has not been registered.");
 
+            Logger.Info($"Unregister editor '{typeof(TAssetEditor).FullName}'.");
             editorRegistry.Remove(entry);
         }
     }

@@ -11,7 +11,7 @@ namespace Stride.Editor.Services
     // See Stride.Core.Assets.Editor.SessionViewModel for reference implementation
     public partial class Session
     {
-        private static LoggingScope LoadProjectScope = new LoggingScope(GlobalLogger.GetLogger($"{nameof(Session)}.{nameof(LoadProject)}"));
+        private static LoggingScope LoadProjectScope = LoggingScope.Global($"{nameof(Session)}.{nameof(LoadProject)}");
         public async Task<PackageSessionResult> LoadProject(string path)
         {
             // TODO: display a dialog box with load progress

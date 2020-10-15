@@ -1,4 +1,6 @@
 ﻿using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +11,7 @@ namespace Stride.Editor.Presentation
     /// </summary>
     public class ViewRegistry
     {
+        private static LoggingScope Logger = LoggingScope.Global(nameof(ViewRegistry));
         private Dictionary<Type, Type> modelViewMapping = new Dictionary<Type, Type>();
 
         /// <summary>
@@ -21,6 +24,7 @@ namespace Stride.Editor.Presentation
             if (modelViewMapping.ContainsKey(typeof(TViewModel)))
                 throw new InvalidOperationException($"Cannot register view for a view model '{typeof(TViewModel)}' that has previously been registered.");
 
+            Logger.Info($"Register view '{typeof(TView)}' for instances of '{typeof(TViewModel)}'.");
             modelViewMapping.Add(typeof(TViewModel), typeof(TView));
         }
 
@@ -38,6 +42,7 @@ namespace Stride.Editor.Presentation
                 if (value != typeof(TView))
                     throw new InvalidOperationException($"Inconsistency between registered view and the one being unregistered: '{value}' != '{typeof(TView)}'.");
                 
+                Logger.Info($"Unregister view '{typeof(TView)}'.");
                 modelViewMapping.Remove(typeof(TViewModel));
             }
             else

@@ -22,9 +22,7 @@ namespace Stride.Editor.Presentation
             RootVMContainer = services.GetSafeServiceAs<IRootViewModelContainer>();
         }
 
-        private static LoggingScope Logger = new LoggingScope(GlobalLogger.GetLogger(nameof(ViewDataTemplate)));
-
-        static ViewDataTemplate() { Logger.ActivateLog(LogMessageType.Debug); }
+        private static LoggingScope Logger = LoggingScope.Global(nameof(ViewDataTemplate));
 
         private ViewRegistry ViewRegistry { get; }
 
@@ -103,26 +101,24 @@ namespace Stride.Editor.Presentation
         /// </summary>
         public async Task UpdateView()
         {
-            using (var scope = new TimedScope(UpdateViewScope))
+            using var scope = new TimedScope(UpdateViewScope);
+            try
             {
-                try
-                {
-                    var editorVM = RootVMContainer.RootViewModel;
-                    await BuildAsync(editorVM);
+                var editorVM = RootVMContainer.RootViewModel;
+                await BuildAsync(editorVM);
 
-                    foreach (var tab in editorVM.Tabs.Keys)
-                        await BuildAsync(tab);
-                }
-                catch(Exception e)
-                {
-                    scope.Result = TimedScope.Status.Failure;
-                    scope.Error(e.Message, e);
-                    throw;
-                }
+                foreach (var tab in editorVM.Tabs.Keys)
+                    await BuildAsync(tab);
+            }
+            catch (Exception e)
+            {
+                scope.Result = TimedScope.Status.Failure;
+                scope.Error(e.Message, e);
+                throw;
             }
         }
 
-        private static LoggingScope UpdateViewScope = new LoggingScope(GlobalLogger.GetLogger($"{nameof(ViewDataTemplate)}.{nameof(UpdateView)}"));
+        private static LoggingScope UpdateViewScope = LoggingScope.Global($"{nameof(ViewDataTemplate)}.{nameof(UpdateView)}");
 
         /// <summary>
         /// Context passed to the view factory for <see cref="ViewContainer"/>.

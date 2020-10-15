@@ -1,11 +1,16 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
+using Stride.Core.Diagnostics;
+using Stride.Editor.Design.Core.Logging;
 using Stride.Editor.Presentation.VirtualDom;
 using System;
 using System.Threading.Tasks;
 
 namespace Stride.Editor.Presentation
 {
+    /// <summary>
+    /// View container which performs the UI control update from the virtual view.
+    /// </summary>
     public class ViewContainer
     {
         public ViewContainer(ContentControl container, Func<object, IViewBuilder> viewFactory, Action<object> cleanup)
@@ -19,6 +24,8 @@ namespace Stride.Editor.Presentation
         private Func<object, IViewBuilder> ViewFactory { get; }
         private Action<object> Cleanup { get; }
         private IViewBuilder LastView { get; set; }
+
+        private static LoggingScope Logger = LoggingScope.Global(nameof(ViewContainer));
 
         /// <summary>
         /// On the UI thread, creates a view from the <see cref="ViewFactory"/>, updates UI, calls <see cref="Cleanup"/>.
@@ -37,9 +44,12 @@ namespace Stride.Editor.Presentation
         private void CreateAndUpdateView(object context)
         {
             var newView = ViewFactory(context);
+
+            Logger.Debug("Updating UI container...");
             newView.UpdateRoot(Container, LastView);
 
             LastView = newView;
+            Logger.Debug("UI updated. Last virtual view saved.");
 
             Cleanup(context);
         }
