@@ -14,6 +14,12 @@ namespace Stride.Editor.Presentation.Core.Docking
             ViewModel = editor;
         }
 
+        // TODO: dispatch a command and return false
+        public override bool OnClose()
+        {
+            return base.OnClose();
+        }
+
         /// <inheritdoc/>
         public object ViewModel { get; }
     }

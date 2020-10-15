@@ -6,6 +6,7 @@ using Stride.Editor.Commands;
 using Stride.Editor.Design;
 using Stride.Editor.Design.AssetBrowser;
 using Stride.Editor.Design.Core;
+using Stride.Editor.Design.Core.Docking;
 using Stride.Editor.Design.Core.Logging;
 using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Presentation;
@@ -49,7 +50,7 @@ namespace Stride.Editor
                                 {
                                     await Session.LoadProject(@"D:\Documents\Stride Projects\MinimalTestProject\MinimalTestProject.sln");
                                     var browser = new AssetBrowserViewModel(Session.PackageSession);
-                                    Session.EditorViewModel.Tabs.Add(new ToolTabViewModel(browser), browser);
+                                    Session.EditorViewModel.Tabs.Add(Services.GetService<TabManager>().CreateToolTab(browser), browser);
                                     await Services.GetService<IViewUpdater>().UpdateView();
                                 }),
                             }
@@ -70,6 +71,10 @@ namespace Stride.Editor
             Services.AddService<IUndoService>(new UndoService());
             Services.AddService<ICommandDispatcher>(new CommandDispatcher(Services));
             Services.AddService<IMemberViewProvider<IViewBuilder>>(new MemberViewProvider(Services));
+
+            var tabManager = new TabManager(Services);
+            Services.AddService<ITabManager>(tabManager);
+            Services.AddService<TabManager>(tabManager);
 
             var assetManager = new AssetManager(Services);
             Services.AddService<IAssetManager>(assetManager);
