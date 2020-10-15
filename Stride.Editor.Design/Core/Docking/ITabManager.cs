@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading.Tasks;
 
 namespace Stride.Editor.Design.Core.Docking
 {
@@ -10,12 +8,12 @@ namespace Stride.Editor.Design.Core.Docking
     /// <note>The ITabManager encapsulates mutable state of the docking system.</note>
     public interface ITabManager
     {
-        ITabViewModel CreateEditorTab(IAssetEditor editor);
+        Task<ITabViewModel> CreateEditorTab(IAssetEditor editor);
 
-        ITabViewModel CreateToolTab(object viewModel);
+        Task<ITabViewModel> CreateToolTab(object viewModel);
 
-        void FocusTab(ITabViewModel tabViewModel);
+        Task FocusTab(ITabViewModel tabViewModel);
 
-        void CloseTab(ITabViewModel tabViewModel);
+        Task CloseTab(ITabViewModel tabViewModel);
     }
 }

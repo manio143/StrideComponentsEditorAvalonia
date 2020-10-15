@@ -50,7 +50,7 @@ namespace Stride.Editor
                                 {
                                     await Session.LoadProject(@"D:\Documents\Stride Projects\MinimalTestProject\MinimalTestProject.sln");
                                     var browser = new AssetBrowserViewModel(Session.PackageSession);
-                                    Session.EditorViewModel.Tabs.Add(Services.GetService<TabManager>().CreateToolTab(browser), browser);
+                                    Services.GetService<TabManager>().CreateToolTab(browser);
                                     await Services.GetService<IViewUpdater>().UpdateView();
                                 }),
                             }

@@ -2,6 +2,7 @@
 using Stride.Core.Assets;
 using Stride.Core.Diagnostics;
 using Stride.Editor.Design;
+using Stride.Editor.Design.Core.Docking;
 using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,11 @@ namespace Stride.Editor.Services
         {
             Services = services;
             Session = services.GetSafeServiceAs<Session>();
+            TabManager = services.GetSafeServiceAs<ITabManager>();
         }
 
         private IServiceRegistry Services { get; }
+        private ITabManager TabManager { get; }
 
         private Session Session { get; }
 
@@ -49,14 +52,13 @@ namespace Stride.Editor.Services
                 var newEditor = CreateEditorInstance(editorType, asset);
                 newEditor.AssetName = assetItem.Location.GetFileNameWithoutExtension();
                 openedEditors.Add(newEditor);
-                // TODO: add editor to the Session.EditorViewModel
+                TabManager.CreateEditorTab(newEditor);
             }
             else
             {
-                // TODO: focus existing editor
+                var tab = Session.EditorViewModel.Tabs.Keys.First(t => t.ViewModel == openedEditorOfDesiredType);
+                TabManager.FocusTab(tab);
             }
-            // check if this asset (by Id) has been opened with this editor
-            // if not, open a new one (_next to the last opened one_)
         }
 
         private Asset GetOrOpenAsset(AssetItem assetItem)

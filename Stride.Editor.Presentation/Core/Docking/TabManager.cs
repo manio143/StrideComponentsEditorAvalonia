@@ -1,4 +1,5 @@
 ﻿using Avalonia.Collections;
+using Avalonia.Threading;
 using Dock.Model;
 using Dock.Model.Controls;
 using Stride.Core;
@@ -9,6 +10,7 @@ using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.Docking;
 using Stride.Editor.Design.Core.Logging;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Stride.Editor.Presentation.Core.Docking
 {
@@ -19,43 +21,63 @@ namespace Stride.Editor.Presentation.Core.Docking
         public TabManager(IServiceRegistry services)
         {
             CommandDispatcher = services.GetSafeServiceAs<ICommandDispatcher>();
+            Session = services.GetSafeServiceAs<IRootViewModelContainer>();
             InitializeDockLayout();
         }
 
         private ICommandDispatcher CommandDispatcher { get; }
+        private IRootViewModelContainer Session { get; }
         private HashSet<ITabViewModel> tabs = new HashSet<ITabViewModel>();
         private DockFactory factory = new DockFactory();
-        
+
         public IDock Layout { get; private set; }
-        
-        public void CloseTab(ITabViewModel tabViewModel)
+
+        public async Task CloseTab(ITabViewModel tabViewModel)
         {
-            Logger.Debug($"Close tab '{tabViewModel.Id}'.");
-            factory.RemoveDockable(tabViewModel as IDockable, collapse: false);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Logger.Debug($"Close tab '{tabViewModel.Id}'.");
+                factory.RemoveDockable(tabViewModel as IDockable, collapse: false);
+                Session.RootViewModel.Tabs.Remove(tabViewModel);
+            });
         }
 
-        public ITabViewModel CreateEditorTab(IAssetEditor editor)
+        public async Task<ITabViewModel> CreateEditorTab(IAssetEditor editor)
         {
-            var tab = new EditorTabViewModel(editor);
-            Logger.Debug($"Create new editor tab '{tab.Id}'.");
-            factory.AddDockable(factory.Documents, tab);
-            tabs.Add(tab);
-            return tab;
+            return await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var tab = new EditorTabViewModel(editor);
+                Logger.Debug($"Create new editor tab '{tab.Id}'.");
+                factory.AddDockable(factory.Documents, tab);
+                tabs.Add(tab);
+                Session.RootViewModel.Tabs.Add(tab, editor);
+                Session.RootViewModel.ActiveTab = tab;
+                return tab;
+            });
         }
 
-        public ITabViewModel CreateToolTab(object viewModel)
+        public async Task<ITabViewModel> CreateToolTab(object viewModel)
         {
-            var tab = new ToolTabViewModel(viewModel);
-            Logger.Debug($"Create new tool tab '{tab.Id}'.");
-            factory.AddDockable(factory.Tools, tab);
-            tabs.Add(tab);
-            return tab;
+            return await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var tab = new ToolTabViewModel(viewModel);
+                Logger.Debug($"Create new tool tab '{tab.Id}'.");
+                factory.AddDockable(factory.Tools, tab);
+                tabs.Add(tab);
+                Session.RootViewModel.Tabs.Add(tab, viewModel);
+                Session.RootViewModel.ActiveTab = tab;
+                return tab;
+            });
         }
 
-        public void FocusTab(ITabViewModel tabViewModel)
+        public async Task FocusTab(ITabViewModel tabViewModel)
         {
-            Logger.Debug($"Focus tab '{tabViewModel.Id}'.");
-            factory.SetActiveDockable(tabViewModel as IDockable);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Logger.Debug($"Focus tab '{tabViewModel.Id}'.");
+                factory.SetActiveDockable(tabViewModel as IDockable);
+                Session.RootViewModel.ActiveTab = tabViewModel;
+            });
         }
 
         private void InitializeDockLayout()
