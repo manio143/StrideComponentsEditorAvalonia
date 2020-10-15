@@ -2,7 +2,7 @@
 using Stride.Core.Reflection;
 using Stride.Editor.Design;
 
-namespace Stride.Editor.Presentation
+namespace Stride.Editor.Design
 {
     internal class Module
     {
