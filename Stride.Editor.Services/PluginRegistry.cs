@@ -39,10 +39,10 @@ namespace Stride.Editor.Services
                 throw new InvalidOperationException($"Plugin of type '{plugin.GetType()}' is already registered.");
 
             Logger.Debug($"Registering plugin '{plugin.GetType().FullName}'...");
-            
+
             plugin.RegisterPlugin(Services);
             activePlugins.Add(plugin.GetType(), plugin);
-            
+
             Logger.Info($"Registered plugin '{plugin.GetType().FullName}'.");
         }
 
@@ -50,14 +50,14 @@ namespace Stride.Editor.Services
         {
             if (!activePlugins.ContainsKey(plugin.GetType()))
                 throw new InvalidOperationException($"Plugin of type '{plugin.GetType()}' has not been registered.");
-            
+
             Logger.Debug($"Unregistering plugin '{plugin.GetType().FullName}'...");
 
             var rplugin = activePlugins[plugin.GetType()];
-            
+
             if (plugin != rplugin)
                 Logger.Warning($"A different instance of plugin '{plugin.GetType()}' has been registered and unregistered. Make sure the plugin has no state.");
-            
+
             plugin.UnregisterPlugin(Services);
             activePlugins.Remove(plugin.GetType());
 
@@ -72,17 +72,23 @@ namespace Stride.Editor.Services
         public void RefreshAvailablePlugins()
         {
             Logger.Debug($"Refreshing available plugins...");
-            
+
             availablePlugins.Clear();
 
             var assemblies = AssemblyRegistry.Find(EditorAssemblyCategory.Editor);
             foreach (var assembly in assemblies)
             {
-                var plugins = assembly.GetTypes().Where(t => typeof(IEditorPlugin).IsAssignableFrom(t) && t.GetConstructor(new Type[0]) != null);
-                foreach (var plugin in plugins)
+                var scanTypes = AssemblyRegistry.GetScanTypes(assembly);
+                if (scanTypes != null &&
+                    scanTypes.Types.TryGetValue(typeof(IEditorPlugin), out var plugins))
                 {
-                    Logger.Debug($"Found plugin {plugin.FullName}");
-                    availablePlugins.Add((IEditorPlugin)Activator.CreateInstance(plugin));
+                    foreach (var plugin in plugins)
+                    {
+                        if (plugin.IsAbstract || plugin.GetConstructor(Type.EmptyTypes) == null)
+                            continue;
+                        Logger.Debug($"Found plugin {plugin.FullName}");
+                        availablePlugins.Add((IEditorPlugin)Activator.CreateInstance(plugin));
+                    }
                 }
             }
         }

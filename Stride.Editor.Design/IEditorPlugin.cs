@@ -1,10 +1,12 @@
 ﻿using Stride.Core;
+using Stride.Core.Reflection;
 
 namespace Stride.Editor.Design
 {
     /// <summary>
     /// Plugin entry point.
     /// </summary>
+    [AssemblyScan]
     public interface IEditorPlugin
     {
         /// <summary>
