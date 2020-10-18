@@ -48,7 +48,10 @@ namespace Stride.Editor
                                 Header = "Open (const)",
                                 Command = ReactiveUI.ReactiveCommand.Create(async () =>
                                 {
+                                    Session.EditorViewModel.LoadingStatus = new LoadingStatus(LoadingStatus.LoadingMode.Indeterminate);
+                                    await Services.GetService<IViewUpdater>().UpdateView();
                                     await Session.LoadProject(@"D:\Documents\Stride Projects\MinimalTestProject\MinimalTestProject.sln");
+                                    Session.EditorViewModel.LoadingStatus = null;
                                     var browser = new AssetBrowserViewModel(Session.PackageSession);
                                     Services.GetService<TabManager>().CreateToolTab(browser);
                                     await Services.GetService<IViewUpdater>().UpdateView();

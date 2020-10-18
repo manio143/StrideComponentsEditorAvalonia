@@ -1,8 +1,5 @@
-﻿using Avalonia.Layout;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Stride.Editor.Presentation.VirtualDom.Controls
 {
@@ -11,6 +8,11 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
         public IEnumerable<IViewBuilder> Children
         {
             set { ContentMultiple(nameof(Children), value.Select(v => v.Build())); }
+        }
+
+        public int MinHeight
+        {
+            set { Property(Avalonia.Controls.DockPanel.MinHeightProperty, value); }
         }
     }
 }

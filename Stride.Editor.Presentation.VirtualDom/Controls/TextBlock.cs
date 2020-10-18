@@ -26,5 +26,10 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
         {
             set { Property(Avalonia.Controls.TextBlock.IsEnabledProperty, value); }
         }
+
+        public int Width
+        {
+            set { Property(Avalonia.Controls.TextBlock.WidthProperty, value); }
+        }
     }
 }

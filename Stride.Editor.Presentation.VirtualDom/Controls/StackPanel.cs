@@ -1,8 +1,6 @@
 ﻿using Avalonia.Layout;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Stride.Editor.Presentation.VirtualDom.Controls
 {
@@ -16,6 +14,11 @@ namespace Stride.Editor.Presentation.VirtualDom.Controls
         public Orientation Orientation
         {
             set { Property(Avalonia.Controls.StackPanel.OrientationProperty, value); }
+        }
+
+        public int MinHeight
+        {
+            set { Property(Avalonia.Controls.StackPanel.MinHeightProperty, value); }
         }
     }
 }

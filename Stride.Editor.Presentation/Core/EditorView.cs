@@ -1,14 +1,7 @@
-﻿using Avalonia.Collections;
-using Avalonia.Data;
-using Dock.Avalonia.Controls;
-using Dock.Model;
-using Dock.Model.Controls;
-using Stride.Core;
+﻿using Stride.Core;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Presentation.Core.Docking;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.Core
@@ -27,6 +20,9 @@ namespace Stride.Editor.Presentation.Core
             var menu = new MenuView(Services).CreateView(viewModel.Menu);
             menu.Property(Avalonia.Controls.DockPanel.DockProperty, Avalonia.Controls.Dock.Top);
 
+            var statusBar = CreateStatusBar(viewModel);
+            statusBar.Property(Avalonia.Controls.DockPanel.DockProperty, Avalonia.Controls.Dock.Bottom);
+
             var dockingSystem = CreateDocking(viewModel);
 
             return new Virtual.DockPanel
@@ -34,8 +30,43 @@ namespace Stride.Editor.Presentation.Core
                 Children = new IViewBuilder[]
                 {
                     menu,
+                    statusBar,
+                    // top/bottom children have to go before left/right children
                     dockingSystem,
                 }
+            };
+        }
+
+        private IViewBuilder CreateStatusBar(EditorViewModel viewModel)
+        {
+            var items = new List<IViewBuilder>();
+
+            var statusText = new Virtual.TextBlock
+            {
+                Text = "Status",
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Width = 50,
+            };
+            statusText.Property(Avalonia.Layout.Layoutable.MarginProperty, new Avalonia.Thickness(8, 0));
+            items.Add(statusText);
+
+            if (viewModel.LoadingStatus != null)
+            {
+                var progressBar = new LoadingStatusView(Services).CreateView(viewModel.LoadingStatus);
+                var container = new Virtual.ContentControl
+                {
+                    Width = 100,
+                    Margin = new Avalonia.Thickness(4),
+                    Content = progressBar,
+                };
+                items.Add(container);
+            }
+
+            return new Virtual.StackPanel
+            {
+                MinHeight = 20,
+                Children = items,
+                Orientation = Avalonia.Layout.Orientation.Horizontal,
             };
         }
 
