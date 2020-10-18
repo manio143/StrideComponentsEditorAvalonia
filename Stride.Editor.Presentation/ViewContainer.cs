@@ -35,10 +35,7 @@ namespace Stride.Editor.Presentation
         {
             // creating view has to happen on the UI thread because some data structures
             // e.g. Grid.ColumnsDefinitions require that
-            if (Dispatcher.UIThread.CheckAccess())
-                CreateAndUpdateView(context);
-            else
-                await Dispatcher.UIThread.InvokeAsync(() => CreateAndUpdateView(context));
+            await AvaloniaUIThread.InvokeAsync(() => CreateAndUpdateView(context));
         }
 
         private void CreateAndUpdateView(object context)

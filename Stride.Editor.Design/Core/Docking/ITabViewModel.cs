@@ -11,5 +11,7 @@
         /// Id of the tab.
         /// </summary>
         string Id { get; }
+
+        bool RequiresViewRefresh { get; set; }
     }
 }

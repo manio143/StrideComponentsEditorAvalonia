@@ -72,7 +72,7 @@ namespace Stride.Editor.Presentation.Core
 
         private IViewBuilder CreateDocking(EditorViewModel viewModel)
         {
-            return new Virtual.Dock.DockControl(TabViewModelComparer.Equal)
+            return new Virtual.Dock.DockControl()
             {
                 Layout = TabManager.Layout,
             };

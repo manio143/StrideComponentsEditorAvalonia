@@ -1,5 +1,7 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
+using Avalonia.Threading;
 using Dock.Model;
 using Stride.Core;
 using Stride.Core.Diagnostics;
@@ -42,8 +44,15 @@ namespace Stride.Editor.Presentation
         public async Task<IControl> BuildAsync(object viewModel)
         {
             string id = null;
-            if (viewModel is IDockable dock)
+            if (viewModel is ITabViewModel dock)
+            {
                 id = dock.Id;
+                if (dock.RequiresViewRefresh)
+                {
+                    views.Remove(id);
+                    dock.RequiresViewRefresh = false;
+                }
+            }
             else if (viewModel is EditorViewModel)
                 id = "root";
             else throw new NotSupportedException();
@@ -53,7 +62,10 @@ namespace Stride.Editor.Presentation
             ViewContainer container;
             if (!views.TryGetValue(id, out container))
             {
-                container = new ViewContainer(new ContentControl(), CreateView, Cleanup);
+                await AvaloniaUIThread.InvokeAsync(() =>
+                {
+                    container = new ViewContainer(new ContentControl(), CreateView, Cleanup);
+                });
                 views.Add(id, container);
             }
 
@@ -70,7 +82,7 @@ namespace Stride.Editor.Presentation
 
         public bool Match(object data)
         {
-            return data is IDockable || data is EditorViewModel;
+            return data is ITabViewModel || data is EditorViewModel;
         }
 
         private static IViewBuilder CreateView(object context)

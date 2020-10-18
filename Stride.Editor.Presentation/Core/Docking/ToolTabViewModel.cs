@@ -1,4 +1,5 @@
-﻿using Dock.Model.Controls;
+﻿using Avalonia.LogicalTree;
+using Dock.Model.Controls;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.StringUtils;
 
@@ -15,5 +16,13 @@ namespace Stride.Editor.Presentation.Core.Docking
 
         /// <inheritdoc/>
         public object ViewModel { get; }
+
+        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromLogicalTree(e);
+            RequiresViewRefresh = true;
+        }
+
+        public bool RequiresViewRefresh { get; set; }
     }
 }
