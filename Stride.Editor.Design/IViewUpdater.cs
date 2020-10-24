@@ -7,7 +7,6 @@ namespace Stride.Editor.Design
         /// <summary>
         /// Invoke UI update.
         /// </summary>
-        /// <param name="dispatcher">Dispatcher instance to be disabled during the UI update.</param>
         Task UpdateView();
     }
 }

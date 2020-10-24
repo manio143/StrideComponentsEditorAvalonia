@@ -25,6 +25,9 @@
 
         public LoadingMode Mode { get; set; }
 
+        /// <summary>
+        /// A number from 0 to 100 (rounded percentage).
+        /// </summary>
         public int PercentCompleted { get; set; }
     }
 }

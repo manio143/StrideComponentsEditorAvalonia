@@ -113,6 +113,19 @@ namespace Stride.Editor.Presentation
         /// </summary>
         public async Task UpdateView()
         {
+            // do not allow running more than one update at a time
+            // under "normal" conditions this will never happen
+            // but if it does, we're assuming changes don't introduce breaking inconsistency
+            if (UpdateViewTask?.IsCompleted != false)
+                UpdateViewTask = UpdateViewInternal();
+
+            await UpdateViewTask;
+        }
+
+        private Task UpdateViewTask;
+
+        private async Task UpdateViewInternal()
+        {
             using var scope = new TimedScope(UpdateViewScope);
             try
             {

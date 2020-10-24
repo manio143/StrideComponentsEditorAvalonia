@@ -1,9 +1,5 @@
 ﻿using Stride.Core;
-using Stride.Editor.Design;
-using Stride.Editor.Design.AssetBrowser;
-using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.Dialogs;
-using Stride.Editor.Presentation.Core.Docking;
 using Stride.Editor.Services;
 using System;
 using System.Linq;
@@ -22,7 +18,6 @@ namespace Stride.Editor.Menu
 
         protected override async Task ExecuteAsync(object parameter)
         {
-            var viewUpdater = Services.GetService<IViewUpdater>();
             var dialogService = Services.GetService<IDialogService>();
 
             var dialogSettings = new OpenFileDialogViewModel
@@ -45,15 +40,7 @@ namespace Stride.Editor.Menu
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            Session.EditorViewModel.LoadingStatus = new LoadingStatus(LoadingStatus.LoadingMode.Indeterminate);
-            await viewUpdater.UpdateView();
-
             await Session.LoadProject(path);
-
-            Session.EditorViewModel.LoadingStatus = null;
-            var browser = new AssetBrowserViewModel(Session.PackageSession);
-            await Services.GetService<TabManager>().CreateToolTab(browser);
-            await viewUpdater.UpdateView();
         }
     }
 }

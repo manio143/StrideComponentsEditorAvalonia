@@ -1,5 +1,9 @@
 ﻿using Stride.Core.Assets;
 using Stride.Core.Diagnostics;
+using Stride.Editor.Design;
+using Stride.Editor.Design.AssetBrowser;
+using Stride.Editor.Design.Core;
+using Stride.Editor.Design.Core.Docking;
 using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,13 +16,12 @@ namespace Stride.Editor.Services
     public partial class Session
     {
         private static LoggingScope LoadProjectScope = LoggingScope.Global($"{nameof(Session)}.{nameof(LoadProject)}");
+
         public async Task<PackageSessionResult> LoadProject(string path)
         {
-            // TODO: display a dialog box with load progress
+            var viewUpdater = Services.GetService<IViewUpdater>();
 
-            // in this result will be any errors from loading the project
-            var sessionResult = new PackageSessionResult();
-            sessionResult.MessageLogged += (_, e) => LoadProjectScope.Log(e.Message);
+            PackageSessionResult sessionResult = await SetupResultProgress(viewUpdater);
 
             using (var scope = new TimedScope(LoadProjectScope, TimedScope.Status.Failure))
             {
@@ -33,7 +36,6 @@ namespace Stride.Editor.Services
 
                 PackageSession = sessionResult.Session;
 
-                // TODO: Load user assemblies into AppDomain
                 foreach (var pkg in PackageSession.LocalPackages)
                     pkg.UpdateAssemblyReferences(LoggingScope.Global($"{nameof(Session)}.{nameof(pkg.UpdateAssemblyReferences)}"));
 
@@ -41,8 +43,50 @@ namespace Stride.Editor.Services
                     scope.Result = TimedScope.Status.Success;
             }
 
-            // TODO: populate EditorViewModel with loaded Assets
+            // Create asset browser for package and add it to the viewmodel
+            var browser = new AssetBrowserViewModel(PackageSession);
+            await Services.GetService<ITabManager>().CreateToolTab(browser);
 
+            EditorViewModel.LoadingStatus = null;
+            await viewUpdater.UpdateView();
+
+            return sessionResult;
+        }
+
+        private async Task<PackageSessionResult> SetupResultProgress(IViewUpdater viewUpdater)
+        {
+            EditorViewModel.LoadingStatus = new LoadingStatus(LoadingStatus.LoadingMode.Indeterminate);
+            await viewUpdater.UpdateView();
+
+            // in this result will be any errors from loading the project
+            var sessionResult = new PackageSessionResult();
+            sessionResult.MessageLogged += (_, e) => LoadProjectScope.Log(e.Message);
+            sessionResult.ProgressChanged += async (_, e) =>
+            {
+                bool wasChanged = false;
+                if (e.HasKnownSteps && e.CurrentStep > 0)
+                {
+                    var percentage = EditorViewModel.LoadingStatus.PercentCompleted;
+                    var newPercentage = 100 * e.CurrentStep / e.StepCount;
+                    if (percentage != newPercentage)
+                    {
+                        EditorViewModel.LoadingStatus.Mode = LoadingStatus.LoadingMode.Percentage;
+                        EditorViewModel.LoadingStatus.PercentCompleted = newPercentage;
+                        wasChanged = true;
+                    }
+                }
+                else
+                {
+                    if (EditorViewModel.LoadingStatus.Mode != LoadingStatus.LoadingMode.Indeterminate)
+                    {
+                        EditorViewModel.LoadingStatus.Mode = LoadingStatus.LoadingMode.Indeterminate;
+                        wasChanged = true;
+                    }
+                }
+
+                if (wasChanged)
+                    await viewUpdater.UpdateView();
+            };
             return sessionResult;
         }
 
