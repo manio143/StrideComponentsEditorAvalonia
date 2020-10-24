@@ -40,7 +40,7 @@ namespace Stride.Editor.Plugins
 
             menuProvider.RegisterMenuItem("/File", new MenuItemViewModel
             {
-                Header = "_Open (const)",
+                Header = "_Open...",
                 Command = new OpenCommand(services),
             });
         }

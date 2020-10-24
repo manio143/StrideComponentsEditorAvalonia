@@ -6,6 +6,7 @@ using Stride.Editor.Commands;
 using Stride.Editor.Design;
 using Stride.Editor.Design.AssetBrowser;
 using Stride.Editor.Design.Core;
+using Stride.Editor.Design.Core.Dialogs;
 using Stride.Editor.Design.Core.Docking;
 using Stride.Editor.Design.Core.Logging;
 using Stride.Editor.Design.Core.Menu;
@@ -37,10 +38,12 @@ namespace Stride.Editor
             
             Session.EditorViewModel = new EditorViewModel(menuProvider);
             Session.Services = Services;
-            
+
+            Services.AddService<Window>(this);
             Services.AddService<Session>(Session);
             Services.AddService<IRootViewModelContainer>(Session);
             Services.AddService<ViewRegistry>(new ViewRegistry());
+            Services.AddService<IDialogService>(new DialogService(Services));
 
             var viewDataTemplate = new ViewDataTemplate(Services);
             Services.AddService<IViewUpdater>(viewDataTemplate);
