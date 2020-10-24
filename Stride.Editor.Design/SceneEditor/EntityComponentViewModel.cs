@@ -67,7 +67,8 @@ namespace Stride.Editor.Design.SceneEditor
         {
             // If there's a [Display] return its value
             foreach (var attr in TypeDescriptor.Attributes)
-                if (attr is DisplayAttribute display)
+                if (attr is DisplayAttribute display 
+                    && !string.IsNullOrWhiteSpace(display.Name))
                     return display.Name;
 
             // Otherwise insert spaces before uppper case letters to improve readability
