@@ -49,6 +49,7 @@ namespace Stride.Editor.Presentation
                 id = dock.Id;
                 if (dock.RequiresViewRefresh)
                 {
+                    Logger.Verbose($"Tab requires refresh '{id}'");
                     views.Remove(id);
                     dock.RequiresViewRefresh = false;
                 }

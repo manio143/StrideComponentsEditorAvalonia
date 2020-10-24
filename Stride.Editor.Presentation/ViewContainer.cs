@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Threading;
 using Stride.Core.Diagnostics;
 using Stride.Editor.Design.Core.Logging;
 using Stride.Editor.Presentation.VirtualDom;
@@ -46,9 +45,11 @@ namespace Stride.Editor.Presentation
             Logger.Debug("Updating UI container...");
             DebugCheckIfEqual(LastView, newView);
             newView.UpdateRoot(Container, LastView);
+            
+            Container.Tag = DateTime.Now; // save last update time
 
             LastView = newView;
-            Logger.Debug("UI updated. Last virtual view saved.");
+            Logger.Debug($"UI updated. Last virtual view saved. Tagged: ({Container.Tag}).");
 
             Cleanup(context);
         }
@@ -59,7 +60,10 @@ namespace Stride.Editor.Presentation
             if (@new.Build().Equals(last?.Build()))
                 Logger.Debug("The views are equal.");
             else
+            {
                 Logger.Debug("The views differ.");
+                // Logger.Debug(DebugViewPrinter.PrintView(@new.Build()));
+            }
         }
     }
 }
