@@ -32,35 +32,10 @@ namespace Stride.Editor
 
             Session = new Session();
 
-            Session.EditorViewModel = new EditorViewModel();
-            // TODO: move onto menuprovider
-            Session.EditorViewModel.Menu = new MenuViewModel
-            {
-                Items = new List<MenuItemViewModel>
-                {
-                    new MenuItemViewModel
-                    {
-                        Header = "_File",
-                        Items = new List<MenuItemViewModel>
-                        {
-                            new MenuItemViewModel
-                            {
-                                Header = "Open (const)",
-                                Command = ReactiveUI.ReactiveCommand.Create(async () =>
-                                {
-                                    Session.EditorViewModel.LoadingStatus = new LoadingStatus(LoadingStatus.LoadingMode.Indeterminate);
-                                    await Services.GetService<IViewUpdater>().UpdateView();
-                                    await Session.LoadProject(@"D:\Documents\Stride Projects\MinimalTestProject\MinimalTestProject.sln");
-                                    Session.EditorViewModel.LoadingStatus = null;
-                                    var browser = new AssetBrowserViewModel(Session.PackageSession);
-                                    Services.GetService<TabManager>().CreateToolTab(browser);
-                                    await Services.GetService<IViewUpdater>().UpdateView();
-                                }),
-                            }
-                        }
-                    }
-                }
-            };
+            var menuProvider = new MenuProvider();
+            Services.AddService<IMenuProvider>(menuProvider);
+            
+            Session.EditorViewModel = new EditorViewModel(menuProvider);
             Session.Services = Services;
             
             Services.AddService<Session>(Session);

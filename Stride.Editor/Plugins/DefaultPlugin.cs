@@ -3,6 +3,7 @@ using Stride.Editor.Design;
 using Stride.Editor.Design.AssetBrowser;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Design.Core.Menu;
+using Stride.Editor.Menu;
 using Stride.Editor.Presentation;
 using Stride.Editor.Presentation.AssetBrowser;
 using Stride.Editor.Presentation.Core;
@@ -28,7 +29,20 @@ namespace Stride.Editor.Plugins
 
             DefaultMemberViews.Register(services);
 
-            // TODO: register standard menu
+            RegisterDefaultMenu(services);
+        }
+
+        private void RegisterDefaultMenu(IServiceRegistry services)
+        {
+            var menuProvider = services.GetSafeServiceAs<IMenuProvider>();
+            menuProvider.RegisterMenuItem("/", new MenuItemViewModel { Header = "_File" });
+            menuProvider.RegisterMenuItem("/", new MenuItemViewModel { Header = "_Edit" });
+
+            menuProvider.RegisterMenuItem("/File", new MenuItemViewModel
+            {
+                Header = "_Open (const)",
+                Command = new OpenCommand(services),
+            });
         }
 
         public void UnregisterPlugin(IServiceRegistry services)

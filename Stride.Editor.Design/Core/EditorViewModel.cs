@@ -5,9 +5,12 @@ namespace Stride.Editor.Design.Core
 {
     public class EditorViewModel
     {
-        public EditorViewModel()
+        public EditorViewModel(IMenuProvider menuProvider)
         {
+            MenuProvider = menuProvider;
         }
+
+        private IMenuProvider MenuProvider;
 
         public Dictionary<ITabViewModel, object> Tabs { get; set; } = new Dictionary<ITabViewModel, object>();
 
@@ -15,7 +18,7 @@ namespace Stride.Editor.Design.Core
 
         public IAssetEditor ActiveEditor => Tabs[ActiveTab] as IAssetEditor;
 
-        public MenuViewModel Menu { get; set; }
+        public MenuViewModel Menu => MenuProvider.GetMenu();
 
         public LoadingStatus LoadingStatus { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Stride.Core.Annotations;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace Stride.Editor.Design.Core.Menu
@@ -9,6 +10,6 @@ namespace Stride.Editor.Design.Core.Menu
         public bool IsEnabled { get; set; } = true;
         public ICommand Command { get; set; }
         public object CommandParameter { get; set; }
-        public IEnumerable<MenuItemViewModel> Items { get; set; }
+        public IList<MenuItemViewModel> Items { get; set; }
     }
 }
