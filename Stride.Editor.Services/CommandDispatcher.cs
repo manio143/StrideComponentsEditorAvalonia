@@ -20,8 +20,6 @@ namespace Stride.Editor.Services
             Session = serviceRegistry.GetSafeServiceAs<Session>();
         }
 
-        private Task Worker;
-        private object WorkerLock = new object();
         private readonly Queue<(ICommand, object)> executionQueue = new Queue<(ICommand, object)>();
 
         public IServiceRegistry Services { get; }
@@ -53,18 +51,6 @@ namespace Stride.Editor.Services
             Logger.Debug($"Dispatching command {command.GetType()}.");
             lock (executionQueue)
                 executionQueue.Enqueue((command, context));
-
-            lock (WorkerLock)
-            {
-                if (Worker != null && Worker.IsFaulted)
-                {
-                    Logger.Error("Command dispatcher's worker has faulter.", Worker.Exception);
-                    Worker = null;
-                }
-
-                if (Worker == null)
-                    Worker = Task.Run(ProcessCommands);
-            }
         }
 
         /// <inheritdoc/>
@@ -84,15 +70,18 @@ namespace Stride.Editor.Services
             });
         }
 
-        private async Task ProcessCommands()
+        /// <summary>
+        /// Processes commands that have been enqued during the last UI input processing frame.
+        /// </summary>
+        /// <remarks>This method should not be called outside of UI loop synchronization point.</remarks>
+        public async Task ProcessDispatchedCommands()
         {
-            await Task.Delay(2); // wait for all commands from a single UI action to get added to the queue
-
-            for(;;)
+            bool stateHasBeenModified = false;
+            for (;;)
             {
                 (ICommand cmd, object ctx) item;
 
-                lock(executionQueue)
+                lock (executionQueue)
                 {
                     if (executionQueue.Count == 0)
                         break;
@@ -101,15 +90,14 @@ namespace Stride.Editor.Services
                 }
 
                 item.cmd.Execute(item.ctx);
+                stateHasBeenModified = true;
 
                 if (item.cmd is IReversibleCommand rev && !(item.cmd is ICommand<UndoService>))
                     UndoService.RegisterCommand(rev, item.ctx);
             }
 
-            lock (WorkerLock)
-                Worker = null; // queue has been processed, next dispatched command should spawn a new worker
-            
-            await ViewUpdater.UpdateView();
+            if (stateHasBeenModified)
+                await ViewUpdater.UpdateView();
         }
     }
 }

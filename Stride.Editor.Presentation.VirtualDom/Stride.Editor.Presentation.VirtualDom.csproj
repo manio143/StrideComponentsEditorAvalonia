@@ -13,13 +13,13 @@
     <PackageReference Include="Dock.Model.Avalonia" Version="0.9.12" />
     <PackageReference Include="Dock.Avalonia.Themes.Default" Version="0.9.12" />
     <PackageReference Include="FSharp.Core" Version="4.6.2" />
-    <!--<PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.4.1" />-->
+    <PackageReference Include="JaggerJo.Avalonia.FuncUI" Version="0.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Avalonia.FuncUI">
+    <!--<Reference Include="Avalonia.FuncUI">
       <HintPath>..\..\..\Avalonia.FuncUI\src\Avalonia.FuncUI\bin\Debug\netstandard2.0\Avalonia.FuncUI.dll</HintPath>
-    </Reference>
+    </Reference>-->
   </ItemGroup>
 
 </Project>

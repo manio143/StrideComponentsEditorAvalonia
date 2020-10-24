@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Stride.Core;
 using Stride.Editor.Commands;
@@ -50,8 +51,13 @@ namespace Stride.Editor
             DataTemplates.Add(viewDataTemplate);
 
             Services.AddService<IUndoService>(new UndoService());
-            Services.AddService<ICommandDispatcher>(new CommandDispatcher(Services));
             Services.AddService<IMemberViewProvider<IViewBuilder>>(new MemberViewProvider(Services));
+
+            var commandDispatcher = new CommandDispatcher(Services);
+            Services.AddService<ICommandDispatcher>(commandDispatcher);
+            // after all synchronous code caused by user input has been executed
+            // we begin the commands processing.
+            InputManager.Instance.PostProcess.Subscribe(async (e) => await commandDispatcher.ProcessDispatchedCommands());
 
             var tabManager = new TabManager(Services);
             Services.AddService<ITabManager>(tabManager);

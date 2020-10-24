@@ -4,6 +4,7 @@ using Stride.Core.Diagnostics;
 using Stride.Editor.Design.Core.Logging;
 using Stride.Editor.Presentation.VirtualDom;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Stride.Editor.Presentation
@@ -43,12 +44,22 @@ namespace Stride.Editor.Presentation
             var newView = ViewFactory(context);
 
             Logger.Debug("Updating UI container...");
+            DebugCheckIfEqual(LastView, newView);
             newView.UpdateRoot(Container, LastView);
 
             LastView = newView;
             Logger.Debug("UI updated. Last virtual view saved.");
 
             Cleanup(context);
+        }
+
+        [Conditional("DEBUG")]
+        private void DebugCheckIfEqual(IViewBuilder last, IViewBuilder @new)
+        {
+            if (@new.Build().Equals(last?.Build()))
+                Logger.Debug("The views are equal.");
+            else
+                Logger.Debug("The views differ.");
         }
     }
 }
