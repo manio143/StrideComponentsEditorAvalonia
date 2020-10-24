@@ -18,6 +18,7 @@ namespace Stride.Editor.Services
 
             // in this result will be any errors from loading the project
             var sessionResult = new PackageSessionResult();
+            sessionResult.MessageLogged += (_, e) => LoadProjectScope.Log(e.Message);
 
             using (var scope = new TimedScope(LoadProjectScope, TimedScope.Status.Failure))
             {
@@ -34,9 +35,10 @@ namespace Stride.Editor.Services
 
                 // TODO: Load user assemblies into AppDomain
                 foreach (var pkg in PackageSession.LocalPackages)
-                    pkg.UpdateAssemblyReferences(GlobalLogger.GetLogger($"{nameof(Session)}.{nameof(pkg.UpdateAssemblyReferences)}"));
+                    pkg.UpdateAssemblyReferences(LoggingScope.Global($"{nameof(Session)}.{nameof(pkg.UpdateAssemblyReferences)}"));
 
-                scope.Result = TimedScope.Status.Success;
+                if (!sessionResult.HasErrors)
+                    scope.Result = TimedScope.Status.Success;
             }
 
             // TODO: populate EditorViewModel with loaded Assets

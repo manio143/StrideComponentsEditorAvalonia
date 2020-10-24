@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Stride.Core.Assets" Version="4.0.0.1-beta04" />
     <PackageReference Include="Stride.Assets" Version="4.0.0.1-beta04" ExcludeAssets="contentFiles" />
+    <PackageReference Include="Stride.Assets.Models" Version="4.0.0.1-beta04" ExcludeAssets="contentFiles" />
   </ItemGroup>
 
 </Project>
