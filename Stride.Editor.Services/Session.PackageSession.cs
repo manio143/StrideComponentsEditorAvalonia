@@ -63,29 +63,20 @@ namespace Stride.Editor.Services
             sessionResult.MessageLogged += (_, e) => LoadProjectScope.Log(e.Message);
             sessionResult.ProgressChanged += async (_, e) =>
             {
-                bool wasChanged = false;
                 if (e.HasKnownSteps && e.CurrentStep > 0)
                 {
                     var percentage = EditorViewModel.LoadingStatus.PercentCompleted;
                     var newPercentage = 100 * e.CurrentStep / e.StepCount;
-                    if (percentage != newPercentage)
-                    {
-                        EditorViewModel.LoadingStatus.Mode = LoadingStatus.LoadingMode.Percentage;
-                        EditorViewModel.LoadingStatus.PercentCompleted = newPercentage;
-                        wasChanged = true;
-                    }
+                    EditorViewModel.LoadingStatus.Mode = LoadingStatus.LoadingMode.Percentage;
+                    EditorViewModel.LoadingStatus.PercentCompleted = newPercentage;
                 }
                 else
                 {
-                    if (EditorViewModel.LoadingStatus.Mode != LoadingStatus.LoadingMode.Indeterminate)
-                    {
-                        EditorViewModel.LoadingStatus.Mode = LoadingStatus.LoadingMode.Indeterminate;
-                        wasChanged = true;
-                    }
+                    EditorViewModel.LoadingStatus.Mode = LoadingStatus.LoadingMode.Indeterminate;
                 }
+                EditorViewModel.LoadingStatus.Message = e.Message;
 
-                if (wasChanged)
-                    await viewUpdater.UpdateView();
+                await viewUpdater.UpdateView();
             };
             return sessionResult;
         }

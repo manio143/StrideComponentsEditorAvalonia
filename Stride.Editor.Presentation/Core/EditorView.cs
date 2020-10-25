@@ -53,13 +53,7 @@ namespace Stride.Editor.Presentation.Core
             if (viewModel.LoadingStatus != null)
             {
                 var progressBar = new LoadingStatusView(Services).CreateView(viewModel.LoadingStatus);
-                var container = new Virtual.ContentControl
-                {
-                    Width = 100,
-                    Margin = new Avalonia.Thickness(4),
-                    Content = progressBar,
-                };
-                items.Add(container);
+                items.Add(progressBar);
             }
 
             return new Virtual.StackPanel

@@ -29,5 +29,10 @@
         /// A number from 0 to 100 (rounded percentage).
         /// </summary>
         public int PercentCompleted { get; set; }
+
+        /// <summary>
+        /// Additional message to be displayed next to the progress bar.
+        /// </summary>
+        public string Message { get; set; }
     }
 }
