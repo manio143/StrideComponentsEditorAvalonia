@@ -14,6 +14,7 @@ using Stride.Editor.Design.Core.Menu;
 using Stride.Editor.Presentation;
 using Stride.Editor.Presentation.Core;
 using Stride.Editor.Presentation.Core.Docking;
+using Stride.Editor.Presentation.Core.Docking.Simpified;
 using Stride.Editor.Services;
 using System;
 using System.Collections.Generic;
@@ -59,9 +60,9 @@ namespace Stride.Editor
             // we begin the commands processing.
             InputManager.Instance.PostProcess.Subscribe(async (e) => await commandDispatcher.ProcessDispatchedCommands());
 
-            var tabManager = new TabManager(Services);
+            var tabManager = new SimpleTabManager(Services);
             Services.AddService<ITabManager>(tabManager);
-            Services.AddService<TabManager>(tabManager);
+            Services.AddService<SimpleTabManager>(tabManager);
 
             var assetManager = new AssetManager(Services);
             Services.AddService<IAssetManager>(assetManager);

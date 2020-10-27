@@ -10,7 +10,7 @@ namespace Stride.Editor.Presentation.Core.Docking
         public ToolTabViewModel(object tool)
         {
             Id = $"{tool.GetType().FullName}";
-            Title = $"{tool.GetType().Name.CamelcaseToSpaces()}";
+            Title = $"{tool.GetType().Name.Replace("ViewModel","").CamelcaseToSpaces()}";
             ViewModel = tool;
         }
 

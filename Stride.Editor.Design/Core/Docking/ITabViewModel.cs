@@ -12,6 +12,11 @@
         /// </summary>
         string Id { get; }
 
+        /// <summary>
+        /// Title of the tab.
+        /// </summary>
+        string Title { get; }
+
         bool RequiresViewRefresh { get; set; }
     }
 }

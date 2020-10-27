@@ -1,6 +1,7 @@
 ﻿using Stride.Core;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Presentation.Core.Docking;
+using Stride.Editor.Presentation.Core.Docking.Simpified;
 using System.Collections.Generic;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
@@ -10,10 +11,10 @@ namespace Stride.Editor.Presentation.Core
     {
         public EditorView(IServiceRegistry services) : base(services)
         {
-            TabManager = services.GetSafeServiceAs<TabManager>();
+            TabManager = services.GetSafeServiceAs<SimpleTabManager>();
         }
 
-        private TabManager TabManager { get; }
+        private SimpleTabManager TabManager { get; }
 
         public override IViewBuilder CreateView(EditorViewModel viewModel)
         {
