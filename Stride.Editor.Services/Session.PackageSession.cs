@@ -30,8 +30,6 @@ namespace Stride.Editor.Services
                 await Task.Run(() =>
                 {
                     PackageSession.Load(path, sessionResult);
-
-                    sessionResult.Session.LoadMissingReferences(sessionResult);
                 }).ConfigureAwait(false);
 
                 PackageSession = sessionResult.Session;
