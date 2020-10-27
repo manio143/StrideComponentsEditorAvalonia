@@ -11,6 +11,7 @@ using Stride.Editor.Design.Core.Docking;
 using Stride.Editor.Design.Core.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
 namespace Stride.Editor.Presentation.Core.Docking
 {
@@ -31,6 +32,11 @@ namespace Stride.Editor.Presentation.Core.Docking
         private DockFactory factory = new DockFactory();
 
         public IDock Layout { get; private set; }
+        
+        public IViewBuilder GetControl() => new Virtual.Dock.DockControl()
+        {
+            Layout = this.Layout,
+        };
 
         public async Task CloseTab(ITabViewModel tabViewModel)
         {

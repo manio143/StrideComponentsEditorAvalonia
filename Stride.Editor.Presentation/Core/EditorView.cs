@@ -23,7 +23,7 @@ namespace Stride.Editor.Presentation.Core
             var statusBar = CreateStatusBar(viewModel);
             statusBar.Property(Avalonia.Controls.DockPanel.DockProperty, Avalonia.Controls.Dock.Bottom);
 
-            var dockingSystem = CreateDocking(viewModel);
+            var dockingSystem = TabManager.GetControl();
 
             return new Virtual.DockPanel
             {
@@ -61,14 +61,6 @@ namespace Stride.Editor.Presentation.Core
                 MinHeight = 20,
                 Children = items,
                 Orientation = Avalonia.Layout.Orientation.Horizontal,
-            };
-        }
-
-        private IViewBuilder CreateDocking(EditorViewModel viewModel)
-        {
-            return new Virtual.Dock.DockControl()
-            {
-                Layout = TabManager.Layout,
             };
         }
     }
