@@ -10,9 +10,7 @@ namespace Stride.Editor.Presentation.Core.Member
     {
         public CharMemberView(IServiceRegistry services) : base(services)
         {
-            dispatcher = services.GetSafeServiceAs<ICommandDispatcher>();
         }
-        private ICommandDispatcher dispatcher;
 
         public override bool CanBeApplied(MemberViewModel viewModel)
         {
@@ -24,14 +22,7 @@ namespace Stride.Editor.Presentation.Core.Member
             return new Virtual.TextBox
             {
                 Text = new string((char)viewModel.Value, 1),
-                OnText = (value) =>
-                    dispatcher.Dispatch(
-                        new UpdateMemberValueCommand(),
-                        new UpdateMemberValueCommand.Context
-                        {
-                            ViewModel = viewModel,
-                            Value = value[0],
-                        }),
+                OnText = CreateUpdate<string>(viewModel, v => v[0]),
                 MaxLength = 1,
             };
         }

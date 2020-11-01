@@ -6,6 +6,7 @@ using Stride.Editor.Design.Core.Docking;
 using Stride.Editor.Design.Core.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -31,7 +32,7 @@ namespace Stride.Editor.Services
 
         private readonly List<(Type assetType, Type editorType)> editorRegistry = new List<(Type assetType, Type editorType)>();
 
-        private readonly List<AssetItem> openedAssets = new List<AssetItem>();
+        private readonly Dictionary<Asset, AssetRecord> openedAssets = new Dictionary<Asset, AssetRecord>();
         private readonly List<IAssetEditor> openedEditors = new List<IAssetEditor>();
 
         /// <inheritdoc/>
@@ -63,17 +64,17 @@ namespace Stride.Editor.Services
 
         private Asset GetOrOpenAsset(AssetItem assetItem)
         {
-            var opened = openedAssets.FirstOrDefault(ai => ai.Id == assetItem.Id);
+            var opened = openedAssets.Keys.FirstOrDefault(ai => ai.Id == assetItem.Id);
             if (opened == null)
             {
                 // make a copy that will be edited
                 var clonedAsset = assetItem.Clone();
-                openedAssets.Add(clonedAsset);
+                openedAssets.Add(clonedAsset.Asset, new AssetRecord { AssetItem = clonedAsset });
                 return clonedAsset.Asset;
             }
             else
             {
-                return opened.Asset;
+                return opened;
             }
         }
 
@@ -99,6 +100,19 @@ namespace Stride.Editor.Services
         }
 
         /// <inheritdoc/>
+        public void PushChange(Asset asset, Guid changeId)
+        {
+            openedAssets[asset].Changes.Push(changeId);
+        }
+
+        /// <inheritdoc/>
+        public void PopChange(Asset asset, Guid changeId)
+        {
+            var id = openedAssets[asset].Changes.Pop();
+            Debug.Assert(id == changeId);
+        }
+
+        /// <inheritdoc/>
         public void RegisterAssetEditor<TAsset, TAssetEditor>()
             where TAsset : Asset
             where TAssetEditor : IAssetEditor
@@ -120,6 +134,26 @@ namespace Stride.Editor.Services
 
             Logger.Info($"Unregister editor '{typeof(TAssetEditor).FullName}'.");
             editorRegistry.Remove(entry);
+        }
+
+        private class AssetRecord
+        {
+            public AssetItem AssetItem { get; set; }
+
+            /// <summary>
+            /// Stack of applied changes.
+            /// </summary>
+            public Stack<Guid> Changes { get; set; } = new Stack<Guid>();
+
+            /// <summary>
+            /// Id of the last change before save.
+            /// </summary>
+            public Guid? LastSavedChange { get; set; }
+
+            /// <summary>
+            /// Has there been any changes since last saved.
+            /// </summary>
+            public bool IsDirty => Changes.Count > 0 && (!LastSavedChange.HasValue || Changes.Peek() == LastSavedChange.Value);
         }
     }
 }

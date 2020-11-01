@@ -11,15 +11,18 @@ namespace Stride.Editor.Design.SceneEditor
 {
     public class EntityComponentViewModel
     {
-        public EntityComponentViewModel(EntityComponent component)
+        public EntityComponentViewModel(EntityComponent component, IAssetEditor editor)
         {
             Source = component;
+            Editor = editor;
             TypeDescriptor = TypeDescriptorFactory.Default.Find(component.GetType());
             Name = ComponentName();
             IsEnablable = HasEnabledProperty();
         }
 
         public EntityComponent Source { get; }
+
+        public IAssetEditor Editor { get; }
 
         public string Name { get; }
 
@@ -47,7 +50,7 @@ namespace Stride.Editor.Design.SceneEditor
 
         public IEnumerable<MemberViewModel> ComponentMembers
             => TypeDescriptor.Members
-                .Select(member => new MemberViewModel(Source, member));
+                .Select(member => new MemberViewModel(Source, member, context: Editor));
 
         private IMemberDescriptor enabledMember;
         private IMemberDescriptor EnabledMember

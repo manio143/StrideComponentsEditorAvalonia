@@ -38,6 +38,8 @@ namespace Stride.Editor.Presentation.Core.Member
 
             string format = precision == 0 ? "{0:0}" : $"{{0:0.{new string('0', precision)}}}";
 
+            var update = CreateUpdate<double>(viewModel, v => Convert(viewModel, Math.Round(v, precision)));
+
             if (slider.HasValue)
                 return new Virtual.StackPanel
                 {
@@ -51,14 +53,7 @@ namespace Stride.Editor.Presentation.Core.Member
                             Maximum = upper,
                             SmallChange = slider.Value.SmallStep,
                             LargeChange = slider.Value.LargeStep,
-                            OnValue = (value) =>
-                                dispatcher.Dispatch(
-                                    new UpdateMemberValueCommand(),
-                                    new UpdateMemberValueCommand.Context
-                                    {
-                                        ViewModel = viewModel,
-                                        Value = Convert(viewModel, Math.Round(value, precision)),
-                                    }),
+                            OnValue = update,
                         },
                         new Virtual.TextBlock
                         {
@@ -74,14 +69,7 @@ namespace Stride.Editor.Presentation.Core.Member
                 Maximum = upper,
                 OnValue = (arg) =>
                 {
-
-                    dispatcher.Dispatch(
-                        new UpdateMemberValueCommand(),
-                        new UpdateMemberValueCommand.Context
-                        {
-                            ViewModel = viewModel,
-                            Value = Convert(viewModel, Math.Round(arg.NewValue, precision)),
-                        });
+                    update(arg.NewValue);
                     arg.Handled = true;
                 },
                 FormatString = format,

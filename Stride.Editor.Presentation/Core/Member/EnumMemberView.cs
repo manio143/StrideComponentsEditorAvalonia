@@ -13,9 +13,7 @@ namespace Stride.Editor.Presentation.Core.Member
     {
         public EnumMemberView(IServiceRegistry services) : base(services)
         {
-            dispatcher = services.GetSafeServiceAs<ICommandDispatcher>();
         }
-        private ICommandDispatcher dispatcher;
 
         public override bool CanBeApplied(MemberViewModel viewModel)
         {
@@ -39,14 +37,7 @@ namespace Stride.Editor.Presentation.Core.Member
                             Content = new Virtual.TextBlock { Text = names[i] }
                         }),
                     SelectedIndex = Array.IndexOf(values, viewModel.Value),
-                    OnSelected = (index) =>
-                    dispatcher.Dispatch(
-                        new UpdateMemberValueCommand(),
-                        new UpdateMemberValueCommand.Context
-                        {
-                            ViewModel = viewModel,
-                            Value = values[index],
-                        }),
+                    OnSelected = CreateUpdate<int>(viewModel, index => values[index]),
                 };
             }
             else

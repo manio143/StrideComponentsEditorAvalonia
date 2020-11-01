@@ -9,15 +9,18 @@ namespace Stride.Editor.Design.SceneEditor
 {
     public class EntityViewModel : HierarchyItemViewModel
     {
-        public EntityViewModel(EntityDesign entityDesign)
+        public EntityViewModel(EntityDesign entityDesign, IAssetEditor editor)
         {
             Name = entityDesign.Entity.Name;
             IsFolder = false;
             Source = entityDesign;
-            Components = Source.Entity.Components.Select(comp => new EntityComponentViewModel(comp)).ToList();
+            Editor = editor;
+            Components = Source.Entity.Components.Select(comp => new EntityComponentViewModel(comp, editor)).ToList();
         }
 
         public EntityDesign Source { get; }
+
+        public IAssetEditor Editor { get; }
 
         public List<EntityComponentViewModel> Components { get; }
 
@@ -29,7 +32,7 @@ namespace Stride.Editor.Design.SceneEditor
         {
             foreach (var child in Source.Entity.GetChildren())
             {
-                var childVM = new EntityViewModel(designData[child.Id]);
+                var childVM = new EntityViewModel(designData[child.Id], Editor);
                 this.Children.Add(childVM);
                 childVM.AddChildren(designData);
             }

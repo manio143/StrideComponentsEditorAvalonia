@@ -24,14 +24,7 @@ namespace Stride.Editor.Presentation.Core.Member
             return new Virtual.TextBox
             {
                 Text = (string)viewModel.Value,
-                OnText = (value) =>
-                    dispatcher.Dispatch(
-                        new UpdateMemberValueCommand(),
-                        new UpdateMemberValueCommand.Context
-                        {
-                            ViewModel = viewModel,
-                            Value = value,
-                        }),
+                OnText = CreateUpdate<string>(viewModel),
             };
         }
     }

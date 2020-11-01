@@ -7,12 +7,13 @@ namespace Stride.Editor.Design.Core
 {
     public class MemberViewModel
     {
-        public MemberViewModel(object owner, IMemberDescriptor memberDescriptor, MemberViewModel parent = null)
+        public MemberViewModel(object owner, IMemberDescriptor memberDescriptor, MemberViewModel parent = null, object context = null)
         {
             Source = owner;
             MemberDescriptor = memberDescriptor;
             Parent = parent;
             Name = memberDescriptor.Name.CamelcaseToSpaces();
+            Context = context;
         }
 
         public object Source { get; }
@@ -54,5 +55,10 @@ namespace Stride.Editor.Design.Core
                 return children;
             }
         }
+
+        /// <summary>
+        /// Additional context for the view.
+        /// </summary>
+        public object Context { get; set; }
     }
 }

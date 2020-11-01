@@ -1,6 +1,4 @@
 ﻿using Stride.Core;
-using Stride.Editor.Commands;
-using Stride.Editor.Commands.Core;
 using Stride.Editor.Design.Core;
 using Virtual = Stride.Editor.Presentation.VirtualDom.Controls;
 
@@ -10,9 +8,7 @@ namespace Stride.Editor.Presentation.Core.Member
     {
         public BoolMemberView(IServiceRegistry services) : base(services)
         {
-            dispatcher = services.GetSafeServiceAs<ICommandDispatcher>();
         }
-        private ICommandDispatcher dispatcher;
 
         public override bool CanBeApplied(MemberViewModel viewModel)
         {
@@ -24,14 +20,7 @@ namespace Stride.Editor.Presentation.Core.Member
             return new Virtual.CheckBox
             {
                 IsChecked = (bool)viewModel.Value,
-                OnChecked = (value) => 
-                    dispatcher.Dispatch(
-                        new UpdateMemberValueCommand(), 
-                        new UpdateMemberValueCommand.Context
-                        {
-                            ViewModel = viewModel,
-                            Value = value,
-                        }),
+                OnChecked = CreateUpdate<bool?>(viewModel, v => v ?? false),
             };
         }
     }

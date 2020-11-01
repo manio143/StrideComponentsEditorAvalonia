@@ -1,33 +1,34 @@
 ﻿using Stride.Assets.Entities;
-using Stride.Core.Assets;
 using Stride.Editor.Design.Core.Hierarchy;
 using Stride.Engine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Stride.Editor.Design.SceneEditor
 {
     public class SceneViewModel
     {
-        public SceneViewModel(SceneAsset sceneAsset)
+        public SceneViewModel(SceneAsset sceneAsset, IAssetEditor editor)
         {
             if (sceneAsset == null) throw new ArgumentNullException(nameof(sceneAsset));
             AssetSource = sceneAsset;
+            Editor = editor;
             Items = BuildHierarchyTree(AssetSource.Hierarchy.RootParts, AssetSource.Hierarchy.Parts);
         }
 
-        public SceneViewModel(Scene scene)
+        public SceneViewModel(Scene scene, IAssetEditor editor)
         {
             if (scene == null) throw new ArgumentNullException(nameof(scene));
             GameSource = scene;
+            Editor = editor;
             Items = BuildHierarchyTree(GameSource.Entities, MapEntityById(GameSource.Entities));
         }
 
         public SceneAsset AssetSource { get; }
 
         public Scene GameSource { get; }
+
+        public IAssetEditor Editor { get; }
 
         public List<HierarchyItemViewModel> Items { get; }
 
@@ -46,7 +47,7 @@ namespace Stride.Editor.Design.SceneEditor
             return null;
         }
 
-        private static List<HierarchyItemViewModel> BuildHierarchyTree(IList<Entity> entities, IDictionary<Guid, EntityDesign> designData)
+        private List<HierarchyItemViewModel> BuildHierarchyTree(IList<Entity> entities, IDictionary<Guid, EntityDesign> designData)
         {
             var result = new List<HierarchyItemViewModel>();
             var folders = new List<FolderViewModel>();
@@ -60,11 +61,11 @@ namespace Stride.Editor.Design.SceneEditor
             return result;
         }
 
-        private static void AddRootEntity(Entity entity, IDictionary<Guid, EntityDesign> designData, List<FolderViewModel> folders, List<HierarchyItemViewModel> result)
+        private void AddRootEntity(Entity entity, IDictionary<Guid, EntityDesign> designData, List<FolderViewModel> folders, List<HierarchyItemViewModel> result)
         {
             var entityDesign = designData[entity.Id];
 
-            var viewModel = new EntityViewModel(entityDesign);
+            var viewModel = new EntityViewModel(entityDesign, Editor);
             viewModel.AddChildren(designData);
 
             if (!String.IsNullOrEmpty(entityDesign.Folder))

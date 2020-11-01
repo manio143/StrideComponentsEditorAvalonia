@@ -2,9 +2,7 @@
 using Stride.Core;
 using Stride.Core.Assets;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Stride.Editor.Design.SceneEditor
 {
@@ -13,9 +11,8 @@ namespace Stride.Editor.Design.SceneEditor
         public SceneEditor(SceneAsset sceneAsset, IServiceRegistry services)
         {
             Asset = sceneAsset;
-            Scene = new SceneViewModel(sceneAsset);
+            Scene = new SceneViewModel(sceneAsset, this);
 
-            // DEBUG: TEST
             SelectedEntity = (EntityViewModel)Scene.Items.First(e => e is EntityViewModel);
             SelectedEntity.IsSelected = true;
         }
