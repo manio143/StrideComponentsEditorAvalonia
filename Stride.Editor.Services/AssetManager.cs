@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Stride.Editor.Services
 {
@@ -35,6 +35,8 @@ namespace Stride.Editor.Services
         private readonly Dictionary<Asset, AssetRecord> openedAssets = new Dictionary<Asset, AssetRecord>();
         private readonly List<IAssetEditor> openedEditors = new List<IAssetEditor>();
 
+        public event Action<Asset, IAssetEditor> AssetOpened;
+
         /// <inheritdoc/>
         public void OpenAsset(AssetItem assetItem, Type editorType = null)
         {
@@ -54,6 +56,8 @@ namespace Stride.Editor.Services
                 newEditor.AssetName = assetItem.Location.GetFileNameWithoutExtension();
                 openedEditors.Add(newEditor);
                 TabManager.CreateEditorTab(newEditor);
+
+                AssetOpened?.Invoke(asset, newEditor);
             }
             else
             {
@@ -67,10 +71,8 @@ namespace Stride.Editor.Services
             var opened = openedAssets.Keys.FirstOrDefault(ai => ai.Id == assetItem.Id);
             if (opened == null)
             {
-                // make a copy that will be edited
-                var clonedAsset = assetItem.Clone();
-                openedAssets.Add(clonedAsset.Asset, new AssetRecord { AssetItem = clonedAsset });
-                return clonedAsset.Asset;
+                openedAssets.Add(assetItem.Asset, new AssetRecord { AssetItem = assetItem });
+                return assetItem.Asset;
             }
             else
             {
@@ -102,14 +104,51 @@ namespace Stride.Editor.Services
         /// <inheritdoc/>
         public void PushChange(Asset asset, Guid changeId)
         {
-            openedAssets[asset].Changes.Push(changeId);
+            var record = openedAssets[asset];
+            record.Changes.Push(changeId);
+            record.AssetItem.IsDirty = record.IsDirty;
         }
 
         /// <inheritdoc/>
         public void PopChange(Asset asset, Guid changeId)
         {
-            var id = openedAssets[asset].Changes.Pop();
+            var record = openedAssets[asset];
+            var id = record.Changes.Pop();
             Debug.Assert(id == changeId);
+            record.AssetItem.IsDirty = record.IsDirty;
+        }
+
+        public void SaveAsset(Asset asset)
+        {
+            if (!openedAssets.ContainsKey(asset))
+                throw new ArgumentException($"The specified asset '{asset.Id}' has not been opened", nameof(asset));
+
+            Logger.Info($"Saving asset '{asset.Id}'...");
+
+            var rec = openedAssets[asset];
+
+            if (!rec.IsDirty)
+            {
+                Logger.Verbose("Asset not dirty, skipping.");
+                return;
+            }
+
+            var result = new LoggerResult();
+            result.MessageLogged += (_, e) => Logger.Log(e.Message);
+            Package.SaveSingleAsset(rec.AssetItem, result);
+            //TODO: handle errors
+
+            rec.MarkSaved();
+        }
+
+        /// <inheritdoc/>
+        public async void SaveAll()
+        {
+            var result = await Session.SaveProject();
+
+            if (!result.HasErrors)
+                foreach (var rec in openedAssets.Values)
+                    rec.MarkSaved();
         }
 
         /// <inheritdoc/>
@@ -150,10 +189,22 @@ namespace Stride.Editor.Services
             /// </summary>
             public Guid? LastSavedChange { get; set; }
 
+            public void MarkSaved() => LastSavedChange = Changes.Peek();
+
             /// <summary>
             /// Has there been any changes since last saved.
             /// </summary>
-            public bool IsDirty => Changes.Count > 0 && (!LastSavedChange.HasValue || Changes.Peek() == LastSavedChange.Value);
+            public bool IsDirty
+            {
+                get
+                {
+                    if (Changes.Count == 0)
+                        return false;
+                    if (LastSavedChange.HasValue)
+                        return Changes.Peek() != LastSavedChange.Value;
+                    return true;
+                }
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using Stride.Core;
 using Stride.Editor.Commands;
 using Stride.Editor.Commands.SceneEditor;
+using Stride.Editor.Design;
 using Stride.Editor.Design.Core;
 using Stride.Editor.Design.SceneEditor;
 using Stride.Editor.Presentation.Core;
@@ -18,10 +19,12 @@ namespace Stride.Editor.Presentation.SceneEditor
         {
             memberView = services.GetSafeServiceAs<IMemberViewProvider<IViewBuilder>>();
             dispatcher = services.GetSafeServiceAs<ICommandDispatcher>();
+            assetManager = services.GetSafeServiceAs<IAssetManager>();
         }
 
         private IMemberViewProvider<IViewBuilder> memberView;
         private ICommandDispatcher dispatcher;
+        private IAssetManager assetManager;
 
         public override IViewBuilder CreateView(EntityComponentViewModel viewModel)
         {
@@ -64,6 +67,8 @@ namespace Stride.Editor.Presentation.SceneEditor
                                     {
                                         ViewModel = viewModel,
                                         Enable = check ?? false,
+                                        AssetManager = assetManager,
+                                        Asset = viewModel.Editor.Asset,
                                     });
                         },
                     },

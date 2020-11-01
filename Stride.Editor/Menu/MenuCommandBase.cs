@@ -1,4 +1,5 @@
 ﻿using Stride.Core;
+using Stride.Editor.Presentation;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -16,7 +17,10 @@ namespace Stride.Editor.Menu
 
         public event EventHandler CanExecuteChanged;
 
-        protected void OnCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        protected async void OnCanExecuteChanged()
+        {
+            await AvaloniaUIThread.InvokeAsync(() => CanExecuteChanged?.Invoke(this, EventArgs.Empty));
+        }
 
         public virtual bool CanExecute(object parameter) => true;
 

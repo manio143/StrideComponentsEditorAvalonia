@@ -43,6 +43,16 @@ namespace Stride.Editor.Plugins
                 Header = "_Open...",
                 Command = new OpenCommand(services),
             });
+            menuProvider.RegisterMenuItem("/File", new MenuItemViewModel
+            {
+                Header = "_Save",
+                Command = new SaveCommand(services),
+            });
+            menuProvider.RegisterMenuItem("/File", new MenuItemViewModel
+            {
+                Header = "Save _All",
+                Command = new SaveAllCommand(services),
+            });
 
             menuProvider.RegisterMenuItem("/Edit", new MenuItemViewModel
             {
