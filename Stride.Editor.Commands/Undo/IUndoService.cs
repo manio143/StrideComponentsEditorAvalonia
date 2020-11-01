@@ -1,4 +1,5 @@
 ﻿using Stride.Editor.Commands;
+using System;
 
 namespace Stride.Editor.Services
 {
@@ -40,5 +41,10 @@ namespace Stride.Editor.Services
         /// </summary>
         /// <param name="context"></param>
         void Clear(object context);
+
+        /// <summary>
+        /// The state of the undo/redo stack has been changed.
+        /// </summary>
+        event Action StateChanged;
     }
 }

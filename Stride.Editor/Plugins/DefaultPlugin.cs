@@ -43,6 +43,17 @@ namespace Stride.Editor.Plugins
                 Header = "_Open...",
                 Command = new OpenCommand(services),
             });
+
+            menuProvider.RegisterMenuItem("/Edit", new MenuItemViewModel
+            {
+                Header = "_Undo",
+                Command = new UndoCommand(services),
+            });
+            menuProvider.RegisterMenuItem("/Edit", new MenuItemViewModel
+            {
+                Header = "_Redo",
+                Command = new RedoCommand(services),
+            });
         }
 
         public void UnregisterPlugin(IServiceRegistry services)
