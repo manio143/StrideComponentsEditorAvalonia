@@ -16,5 +16,10 @@
     <Style Selector="TextBlock.h3">
       <Setter Property="FontSize" Value="12" />
     </Style>
+    
+    <!-- Temporary styles for properties -->
+    <Style Selector="Expander > ItemsControl">
+      <Setter Property="Margin" Value="20 0 0 0" />
+    </Style>
   </Application.Styles>
 </Application>

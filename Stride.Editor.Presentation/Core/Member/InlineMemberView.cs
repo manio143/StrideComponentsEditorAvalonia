@@ -13,19 +13,24 @@ namespace Stride.Editor.Presentation.Core.Member
 
         public override IViewBuilder CreateView(MemberViewModel viewModel)
         {
-            var valueProperty = CreatePropertyView(viewModel);
-            valueProperty.Property(Layoutable.HorizontalAlignmentProperty, HorizontalAlignment.Right);
-
-            return new Virtual.DockPanel
+            var label = new Virtual.TextBlock
             {
+                Text = viewModel.Name,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            var valueProperty = CreatePropertyView(viewModel);
+            valueProperty.Property(Layoutable.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            valueProperty.Property(Avalonia.Controls.Grid.ColumnProperty, 1);
+
+            return new Virtual.Grid
+            {
+                ColumnDefinitions = new Avalonia.Controls.ColumnDefinitions("*,*"),
+                RowDefinitions = new Avalonia.Controls.RowDefinitions("*"),
                 Children = new IViewBuilder[]
                 {
-                    new Virtual.TextBlock
-                    {
-                        Text = viewModel.Name,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        VerticalAlignment = VerticalAlignment.Center,
-                    },
+                    label,
                     valueProperty,
                 }
             };
